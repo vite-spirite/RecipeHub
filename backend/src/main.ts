@@ -9,6 +9,7 @@ async function bootstrap() {
     .setTitle('Recipe Hub')
     .setDescription('Collab recipe app API')
     .setVersion('1.0')
+    .addTag('users')
     .build();
 
     const document = SwaggerModule.createDocument(app, config);
