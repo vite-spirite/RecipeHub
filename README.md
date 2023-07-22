@@ -42,7 +42,23 @@
 
 ###
 
+<h2 align="left">Lancement</h2>
+
+###
+
+<h3 align="left">Sans docker</h3>
+
+###
+
 <p align="left">1. Clonez ce dépôt sur votre machine locale.<br>2. Installez les dépendances en utilisant la commande `npm install`.<br>3. Lancez l'application avec la commande `npm run dev`.</p>
+
+###
+
+<h3 align="left">Avec docker</h3>
+
+###
+
+<p align="left">1. Clonez ce dépôt sur votre machine locale.<br>3. Lancez l'application avec la commande `docker-compose up --build`.</p>
 
 ###
 

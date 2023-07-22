@@ -1,0 +1,26 @@
+version: '3.5'
+
+services:
+  db:
+    image: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: recipehub
+    ports:
+      - 5432:5432
+    restart: always
+    container_name: recipehub_postgres
+  app:
+    build: ./backend
+    container_name: recipehub_backend
+    ports:
+      - 3000:3000
+    depends_on:
+      - db
+    volumes:
+      - ./backend:/app
+volumes:
+  pgdata:
