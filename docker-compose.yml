@@ -13,14 +13,30 @@ services:
       - 5432:5432
     restart: always
     container_name: recipehub_postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+    restart: always
+    container_name: recipehub_redis
+    command: redis-server --requirepass redis --save 20 1 --loglevel warning
+    volumes:
+      - redis:/data
   app:
     build: ./backend
     container_name: recipehub_backend
     ports:
       - 3000:3000
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     volumes:
       - ./backend:/app
 volumes:
   pgdata:
+  redis:
