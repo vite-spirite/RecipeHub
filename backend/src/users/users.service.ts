@@ -10,7 +10,8 @@ export class UsersService {
   constructor(private prisma: PrismaService) {}
 
   async create(createUserDto: CreateUserDto): Promise<User|undefined> {
-    const user = await this.prisma.user.create({data: createUserDto});
+    const {passwordConfirmation, picture, ...data} = createUserDto;
+    const user = await this.prisma.user.create({data});
     return user
   }
 
@@ -38,5 +39,13 @@ export class UsersService {
 
   remove(id: number) {
     return `This action removes a #${id} user`;
+  }
+
+  async findByEmail(email: string): Promise<User|undefined> {
+    return await this.prisma.user.findFirst({where: {email}});
+  }
+
+  async findById(id: number): Promise<User|undefined> {
+    return this.prisma.user.findFirst({where: {id}});
   }
 }
