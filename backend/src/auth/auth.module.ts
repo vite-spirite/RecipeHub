@@ -38,7 +38,7 @@ import { TwitterStrategy } from './strategy/twitter.strategy';
             useFactory: async (config: ConfigService) => ({                
                 secret: config.get('JWT_SECRET'),
                 signOptions: {
-                    expiresIn: '60s'
+                    expiresIn: config.get('JWT_EXPIRES_IN'),
                 }
             }),
         }),
