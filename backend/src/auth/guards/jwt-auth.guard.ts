@@ -1,13 +1,10 @@
 import { CanActivate, Injectable, UnauthorizedException } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
-import { JwtService } from "@nestjs/jwt";
-import { ConfigService } from "@nestjs/config";
-import { config } from "process";
 import { AccessTokenExpiredError } from "../errors/access-token-expire.errors";
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') implements CanActivate {
-    constructor(private jwtService: JwtService, private config: ConfigService) {
+    constructor() {
         super();
     }
 
@@ -21,8 +18,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') implements CanActivate {
         }
 
         try {
-            const payload = await this.jwtService.verifyAsync(token);
-            request.user = payload;
+            await super.canActivate(context);
             return true;
         } catch(e) {
             throw new AccessTokenExpiredError();
