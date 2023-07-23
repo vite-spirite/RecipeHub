@@ -63,7 +63,7 @@ export class UsersService {
   }
 
   async findById(id: number): Promise<User|undefined> {
-    return this.prisma.user.findFirst({where: {id}});
+    return this.prisma.user.findFirst({where: {id}, include: {roles: true}});
   }
 
   async findByProviderId(provider: Provider, providerId: string): Promise<User|undefined> {

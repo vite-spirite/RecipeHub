@@ -6,13 +6,15 @@ import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { CategoryModule } from './category/category.module';
+import { CaslModule } from './casl/casl.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({isGlobal: true}),
     UsersModule,
     AuthModule,
-    CategoryModule
+    CategoryModule,
+    CaslModule
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
