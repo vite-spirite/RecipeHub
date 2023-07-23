@@ -12,8 +12,10 @@ export class AuthService {
     constructor(@Inject(CACHE_MANAGER) private cache: CacheStore, private userService: UsersService, private jwtService: JwtService) {}
 
     async validateUser(email: string, password: string): Promise<any> {
+        
         const user = await this.userService.findByEmail(email);
-        if (user && user.provider === Provider.LOCAL && user.password === password) {
+
+        if (user && user.provider === Provider.LOCAL && await this.userService.comparePassword(password, user.password)) {
             const { password, picture, ...result } = user;
             return result;
         }

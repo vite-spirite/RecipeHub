@@ -5,6 +5,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { User } from './entities/user.entity';
 import { PublicUserDto } from './dto/public-user.dto';
 import { Provider } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -17,6 +18,9 @@ export class UsersService {
       if(data.password !== passwordConfirmation) {
         throw new BadRequestException('Password confirmation does not match');
       }
+
+      const {password} = data;
+      data.password = await this.hashPassword(password);
 
       data.providerId = null;
     }
@@ -64,5 +68,12 @@ export class UsersService {
 
   async findByProviderId(provider: Provider, providerId: string): Promise<User|undefined> {
     return await this.prisma.user.findFirst({where: {providerId, provider}});
+  }
+
+  private async hashPassword(password: string): Promise<string> {
+    return await bcrypt.hash(password, 10);
+  }
+  async comparePassword(password: string, hash: string): Promise<boolean> {
+    return await bcrypt.compare(password, hash);
   }
 }

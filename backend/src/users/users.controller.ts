@@ -4,7 +4,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { ApiBadRequestResponse, ApiCreatedResponse, ApiFoundResponse, ApiNotFoundResponse, ApiTags } from '@nestjs/swagger';
 import { PublicUserDto } from './dto/public-user.dto';
-import { Prisma } from '@prisma/client';
+import { Prisma, Provider } from '@prisma/client';
 
 @ApiTags('users')
 @Controller('users')
@@ -14,7 +14,7 @@ export class UsersController {
   @Post()
   @ApiCreatedResponse({type: User})
   async create(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return await this.usersService.create(createUserDto);
+    return await this.usersService.create({...createUserDto, provider: Provider.LOCAL});
   }
 
   @Get()
