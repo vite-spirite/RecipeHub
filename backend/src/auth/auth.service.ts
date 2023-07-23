@@ -4,6 +4,8 @@ import {CACHE_MANAGER, CacheStore} from '@nestjs/cache-manager';
 import { User } from 'src/users/entities/user.entity';
 import { TokensAuthDto } from './dto/tokens-auth.dto';
 import { JwtService } from '@nestjs/jwt';
+import { Provider } from '@prisma/client';
+import { EmailExistError } from './errors/email-exist.error';
 
 @Injectable()
 export class AuthService {
@@ -11,7 +13,7 @@ export class AuthService {
 
     async validateUser(email: string, password: string): Promise<any> {
         const user = await this.userService.findByEmail(email);
-        if (user && user.password === password) {
+        if (user && user.provider === Provider.LOCAL && user.password === password) {
             const { password, picture, ...result } = user;
             return result;
         }
@@ -23,6 +25,34 @@ export class AuthService {
             refreshToken: await this.generateRefreshToken(user),
             accessToken: this.jwtService.sign(user),
         }
+    }
+
+    async isUserExistWithSocialProvider(provider: Provider, providerId: string): Promise<boolean> {
+        return !!(await this.userService.findByProviderId(provider, providerId));
+    }
+
+    async signInWithSocialProvider(data: Omit<User, 'password'>): Promise<TokensAuthDto> {
+        const _user = await this.userService.findByProviderId(data.provider, data.providerId);
+
+        if(data.email && !_user && await this.userService.findByEmail(data.email)) {
+            throw new EmailExistError();
+        }
+
+        if(!_user) {
+            const user = await this.userService.create({
+                firstName: data.firstName,
+                lastName: data.lastName,
+                email: data.email,
+                picture: data.picture,
+                providerId: data.providerId,
+                provider: data.provider,
+                password: null,
+                passwordConfirmation: null,
+            });
+            return this.login(user);
+        }
+
+        return this.login(_user);
     }
 
     async refresh(refreshToken: string): Promise<string> {

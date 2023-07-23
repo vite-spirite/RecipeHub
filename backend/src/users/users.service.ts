@@ -1,16 +1,29 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { User } from './entities/user.entity';
 import { PublicUserDto } from './dto/public-user.dto';
+import { Provider } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
   async create(createUserDto: CreateUserDto): Promise<User|undefined> {
-    const {passwordConfirmation, picture, ...data} = createUserDto;
+    const {passwordConfirmation, ...data} = createUserDto;
+
+    if(data.provider === Provider.LOCAL) {
+      if(data.password !== passwordConfirmation) {
+        throw new BadRequestException('Password confirmation does not match');
+      }
+
+      data.providerId = null;
+    }
+    else {
+      data.password = null;
+    }
+
     const user = await this.prisma.user.create({data});
     return user
   }
@@ -47,5 +60,9 @@ export class UsersService {
 
   async findById(id: number): Promise<User|undefined> {
     return this.prisma.user.findFirst({where: {id}});
+  }
+
+  async findByProviderId(provider: Provider, providerId: string): Promise<User|undefined> {
+    return await this.prisma.user.findFirst({where: {providerId, provider}});
   }
 }

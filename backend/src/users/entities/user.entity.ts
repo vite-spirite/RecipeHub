@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Prisma, user } from "@prisma/client";
+import { Prisma, Provider, user } from "@prisma/client";
 
 export class User implements user {
     @ApiProperty()
@@ -10,12 +10,17 @@ export class User implements user {
     lastName: string;
     @ApiProperty()
     email: string;
-    @ApiProperty()
-    password: string;
     @ApiProperty({nullable: true})
-    picture: Buffer|null;
+    password: string|null;
+    @ApiProperty({nullable: true})
+    picture: string|null;
     @ApiProperty()
     createdAt: Date;
     @ApiProperty()
     updatedAt: Date;
+
+    @ApiProperty({default: Provider.LOCAL})
+    provider: Provider;
+    @ApiProperty({nullable: true})
+    providerId: string|null;
 }

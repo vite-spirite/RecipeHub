@@ -10,13 +10,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Provider {
+  LOCAL
+  GOOGLE
+  FACEBOOK
+  GITHUB
+  TWITTER
+}
+
 model user {
   id Int @default(autoincrement()) @id
   firstName String
   lastName String
-  email String @unique
-  picture Bytes?
-  password String
+  email String? @unique
+  picture String?
+  password String?
+  provider Provider @default(LOCAL)
+  providerId String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

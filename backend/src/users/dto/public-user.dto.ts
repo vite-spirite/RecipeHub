@@ -1,7 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { User } from "../entities/user.entity";
+import { Provider } from "@prisma/client";
 
-export class PublicUserDto implements Exclude<User, 'password'|'email'> {
+export class PublicUserDto implements Exclude<User, 'password'|'email'|'provider'|'providerId'> {
     @ApiProperty()
     id: number;
     @ApiProperty()
@@ -9,7 +10,7 @@ export class PublicUserDto implements Exclude<User, 'password'|'email'> {
     @ApiProperty()
     lastName: string;
     @ApiProperty()
-    picture: Buffer;
+    picture: string|null;
     @ApiProperty()
     createdAt: Date;
     @ApiProperty()
@@ -18,5 +19,6 @@ export class PublicUserDto implements Exclude<User, 'password'|'email'> {
 
     password: string;
     email: string;
-
+    provider: Provider;
+    providerId: string;
 }

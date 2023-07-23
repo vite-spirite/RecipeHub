@@ -9,6 +9,10 @@ import { UsersModule } from 'src/users/users.module';
 import { LocalStrategy } from './strategy/local.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategy/jwt.strategy';
+import { GoogleStrategy } from './strategy/google.strategy';
+import { FacebookStrategy } from './strategy/facebook.strategy';
+import { GithubStrategy } from './strategy/github.strategy';
+import { TwitterStrategy } from './strategy/twitter.strategy';
 
 @Module({
     imports: [
@@ -39,7 +43,7 @@ import { JwtStrategy } from './strategy/jwt.strategy';
             }),
         }),
     ],
-    providers: [AuthService, LocalStrategy, JwtStrategy],
+    providers: [AuthService, LocalStrategy, JwtStrategy, GoogleStrategy, FacebookStrategy, GithubStrategy, TwitterStrategy],
     controllers: [AuthController],
 })
 export class AuthModule {}

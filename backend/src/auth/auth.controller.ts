@@ -6,6 +6,11 @@ import { LocalAuthGuard } from './guards/local-auth.guard';
 import { TokensAuthDto } from './dto/tokens-auth.dto';
 import { RefreshBodyAuthDto } from './dto/refresh-body-auth.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { GoogleAuthGuard } from './guards/google-auth.guard';
+import { FacebookAuthGuard } from './guards/facebook-auth.guard';
+import { GithubAuthGuard } from './guards/github-auth.guard';
+import { TwitterStrategy } from './strategy/twitter.strategy';
+import { TwitterAuthGuard } from './guards/twitter-auth.guard';
 
 @ApiTags('authentification')
 @Controller('auth')
@@ -33,6 +38,47 @@ export class AuthController {
     async getMe(@Request() req) {
         return req.user;
     }
+
+    @UseGuards(GoogleAuthGuard)
+    @Get("google")
+    async googleAuth(@Request() req) {}
+
+    @UseGuards(GoogleAuthGuard)
+    @Get("google/redirect")
+    async googleAuthRedirect(@Request() req) {
+        return await this.authService.signInWithSocialProvider(req.user);
+    }
+
+    @UseGuards(FacebookAuthGuard)
+    @Get("facebook")
+    async facebookAuth(@Request() req) {}
+
+    @UseGuards(FacebookAuthGuard)
+    @Get("facebook/redirect")
+    async facebookAuthRedirect(@Request() req) {
+        return await this.authService.signInWithSocialProvider(req.user);
+    }
+
+    @UseGuards(GithubAuthGuard)
+    @Get("github")
+    async githubAuth(@Request() req) {}
+
+    @UseGuards(GithubAuthGuard)
+    @Get("github/redirect")
+    async githubAuthRedirect(@Request() req) {
+        return await this.authService.signInWithSocialProvider(req.user);
+    }
+
+    @UseGuards(TwitterAuthGuard)
+    @Get("twitter")
+    async twitterAuth(@Request() req) {}
+
+    @UseGuards(TwitterAuthGuard)
+    @Get("twitter/redirect")
+    async twitterAuthRedirect(@Request() req) {
+        return await this.authService.signInWithSocialProvider(req.user);
+    }
+
 }
 
 
