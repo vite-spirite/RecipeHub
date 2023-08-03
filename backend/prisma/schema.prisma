@@ -28,6 +28,7 @@ enum CaslAction {
 
 enum CaslSubject {
   Category
+  Recipe
   User
 }
 
@@ -35,12 +36,19 @@ model user {
   id Int @default(autoincrement()) @id
   firstName String
   lastName String
+
   email String? @unique
-  picture String?
   password String?
+
+  picture String?
+
   provider Provider @default(LOCAL)
   providerId String?
+
   roles role[]
+
+  recipes recipe[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -67,7 +75,68 @@ model category {
   name String
   slug String @unique
   picture String?
+
+  recipes recipe[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   deletedAt DateTime?
+}
+
+model ingredient {
+  id Int @default(autoincrement()) @id
+  name String
+  unit String
+  picture String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+
+  recipes recipeIngredients[]
+}
+
+model recipe {
+  id Int @default(autoincrement()) @id
+  name String
+  slug String @unique
+  pictures String[]
+
+  preparationTime Int
+  cookingTime Int
+  growingTime Int
+  portions Int @default(4)
+  difficulty Int @default(1)
+  ingredients recipeIngredients[]
+  steps recipeStep[]
+
+  authorId Int
+  author user @relation(fields: [authorId], references: [id])
+
+  categories category[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+}
+
+model recipeIngredients {
+  id Int @default(autoincrement()) @id
+  recipeId Int
+  ingredientId Int
+  quantity Int
+  overrideUnit String?
+
+  recipe recipe @relation(fields: [recipeId], references: [id])
+  ingredient ingredient @relation(fields: [ingredientId], references: [id])
+}
+
+model recipeStep {
+  id Int @default(autoincrement()) @id
+
+  recipeId Int
+  step Int
+  description String
+  time Int
+
+  recipe recipe @relation(fields: [recipeId], references: [id])
 }

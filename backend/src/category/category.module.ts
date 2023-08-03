@@ -7,6 +7,7 @@ import { CaslModule } from 'src/casl/casl.module';
 @Module({
   imports: [CaslModule],
   controllers: [CategoryController],
-  providers: [CategoryService, PrismaService]
+  providers: [CategoryService, PrismaService],
+  exports: [CategoryService]
 })
 export class CategoryModule {}

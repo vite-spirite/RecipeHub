@@ -56,4 +56,9 @@ export class CategoryController {
 
     return await this.categoryService.remove(+id);
   }
+
+  @Get('slug/:slug')
+  async findBySlug(@Param('slug') slug: string) {
+    return await this.categoryService.fingBySlug(slug);
+  }
 }

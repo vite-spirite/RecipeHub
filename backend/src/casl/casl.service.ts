@@ -23,7 +23,7 @@ export class CaslService {
         const permissionMapped = permissions.map<Permission>(permission => ({action: permission.action, subject: permission.subject, condition: permission.condition as string, id: permission.id, roleId: permission.roleId}));
 
         const day = user ? parseInt(this.config.get('REDIS_CACHE_ROLE_TTL')) : parseInt(this.config.get('REDIS_CACHE_ROLE_ANONYMOUS_TTL'));
-        const ttl = 60*60*24*day;
+        const ttl = 1000*60*60*24*day;
 
         await this.cache.set(`permissions:${user ? user.id : 'anonymous'}`, permissionMapped, ttl);
         return permissionMapped;

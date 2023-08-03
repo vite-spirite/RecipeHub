@@ -21,6 +21,10 @@ export class CategoryService {
         return await this.prisma.category.findUnique({where: {slug}});
     }
 
+    async findBulkBySlug(slugs: string[]) {
+        return await this.prisma.category.findMany({where: {slug: {in: slugs}}});
+    }
+
     async create(data: CreateCategoryDto): Promise<Category> {
         const lastId = await this.prisma.category.findFirst({
             select: {id: true},

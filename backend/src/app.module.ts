@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { CategoryModule } from './category/category.module';
 import { CaslModule } from './casl/casl.module';
+import { RecipeModule } from './recipe/recipe.module';
 
 @Module({
   imports: [
@@ -14,7 +15,8 @@ import { CaslModule } from './casl/casl.module';
     UsersModule,
     AuthModule,
     CategoryModule,
-    CaslModule
+    CaslModule,
+    RecipeModule
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
