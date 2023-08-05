@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Prisma, Provider, user } from "@prisma/client";
+import { Prisma, Provider, Roles, user } from "@prisma/client";
+import { AuthorizableUser } from "nest-casl";
 
 export class User implements user {
     @ApiProperty()
@@ -18,6 +19,8 @@ export class User implements user {
     createdAt: Date;
     @ApiProperty()
     updatedAt: Date;
+    @ApiProperty({default: Roles.CUSTOMER, enum: Roles})
+    roles: Roles = Roles.CUSTOMER;
 
     @ApiProperty({default: Provider.LOCAL})
     provider: Provider;

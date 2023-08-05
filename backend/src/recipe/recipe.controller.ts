@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Delete, UseGuards } from '@nestjs/common';
 import { RecipeService } from './recipe.service';
 import { Recipe } from './entities/recipe.entity';
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
@@ -7,12 +7,13 @@ import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { JwtPayload } from 'src/auth/dto/jwt-payload.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { User } from 'src/auth/decorators/user.decorators';
-import { CaslAbilityFactory } from 'src/casl/casl-ability.factory/casl-ability.factory';
+import { AccessGuard, Actions, UseAbility } from 'nest-casl';
+import { RecipeHook } from './recipe.hook';
 
 @ApiTags('recipe')
 @Controller('recipe')
 export class RecipeController {
-  constructor(private readonly recipeService: RecipeService, private readonly caslAbility: CaslAbilityFactory) {}
+  constructor(private readonly recipeService: RecipeService) {}
 
   @ApiOkResponse({ type: Recipe })
   @Get(':id')
@@ -26,11 +27,31 @@ export class RecipeController {
     return this.recipeService.getRecipesByCategory(+id, +page);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AccessGuard)
+  @UseAbility(Actions.create, Recipe, RecipeHook)
   @ApiBearerAuth()
   @ApiOkResponse({ type: Recipe })
   @Post()
   async create(@Body() createRecipeDto: CreateRecipeDto, @User() user: JwtPayload): Promise<Recipe> {
     return this.recipeService.create(createRecipeDto, user);
   }
+
+  @UseGuards(JwtAuthGuard, AccessGuard)
+  @UseAbility(Actions.update, Recipe, RecipeHook)
+  @ApiBearerAuth()
+  @ApiOkResponse({ type: Recipe })
+  @Patch(':id')
+  async update(@Param('id') id: number, @Body() updateRecipeDto: CreateRecipeDto, @User() user: JwtPayload): Promise<Recipe> {
+    return this.recipeService.findById(+id);
+  }
+
+  @UseGuards(JwtAuthGuard, AccessGuard)
+  @UseAbility(Actions.delete, Recipe, RecipeHook)
+  @ApiBearerAuth()
+  @ApiOkResponse({ type: Recipe })
+  @Delete(':id')
+  async delete(@Param('id') id: number, @User() user: JwtPayload): Promise<Recipe> {
+    return this.recipeService.findById(+id);
+  }
+
 }

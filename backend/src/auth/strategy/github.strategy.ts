@@ -20,7 +20,7 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
 
     async validate(accessToken: string, refreshToken: string, profile: Profile, done: (error: any, user?: any, info?: any) => void) {
         
-        const user: Omit<User, 'password'|'id'|'createdAt'|'updatedAt'> = {
+        const user: Omit<User, 'password'|'id'|'createdAt'|'updatedAt'|'roles'> = {
             providerId: profile.id,
             provider: Provider.GITHUB,
             email: profile.emails ? profile.emails[0].value : null,

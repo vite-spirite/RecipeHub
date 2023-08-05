@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { User } from "../entities/user.entity";
-import { Provider } from "@prisma/client";
+import { Provider, Roles } from "@prisma/client";
 
 export class PublicUserDto implements Exclude<User, 'password'|'email'|'provider'|'providerId'> {
     @ApiProperty()
@@ -21,4 +21,5 @@ export class PublicUserDto implements Exclude<User, 'password'|'email'|'provider
     email: string;
     provider: Provider;
     providerId: string;
+    roles: Roles
 }

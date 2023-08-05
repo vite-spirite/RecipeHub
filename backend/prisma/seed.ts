@@ -1,95 +1,17 @@
 import { parseArgs } from 'util';
-import {CaslAction, CaslSubject, PrismaClient} from '@prisma/client'
+import {PrismaClient, Roles} from '@prisma/client'
 import {faker} from '@faker-js/faker/locale/fr';
 
 const prisma = new PrismaClient();
 
 const createPermission = async () => {
-    const admin = await prisma.role.create({
-        data: {
-            name: "admin", 
-            permissions: {
-                createMany: {
-                    data: [
-                        {
-                            action: CaslAction.MANAGE,
-                            subject: CaslSubject.Category
-                        },
-                        {
-                            action: CaslAction.MANAGE,
-                            subject: CaslSubject.User
-                        },
-                        {
-                            action: CaslAction.MANAGE,
-                            subject: CaslSubject.Recipe
-                        }
-                    ]
-                }
-            }
-        }
-    });
-
-    const anonymous = await prisma.role.create({
-        data: {
-            name: "anonymous",
-            permissions: {
-                createMany: {
-                    data: [
-                        {
-                            action: CaslAction.READ,
-                            subject: CaslSubject.Category
-                        }
-                    ]
-                }
-            }
-        }
-    });
-
-    const user = await prisma.role.create({
-        data: {
-            name: "user",
-            permissions: {
-                createMany: {
-                    data: [
-                        {
-                            action: CaslAction.READ,
-                            subject: CaslSubject.Category
-                        },
-                        {
-                            action: CaslAction.CREATE,
-                            subject: CaslSubject.Recipe,
-                        },
-                        {
-                            action: CaslAction.UPDATE,
-                            subject: CaslSubject.Recipe,
-                            condition: {"authorId": "$userId"}
-                        },
-                        {
-                            action: CaslAction.DELETE,
-                            subject: CaslSubject.Recipe,
-                            condition: {"authorId": "$userId"}
-                        },
-                        {
-                            action: CaslAction.READ,
-                            subject: CaslSubject.Recipe,
-                        },
-                    ]
-                }
-            }
-        }
-    });
-
     const firstUser = await prisma.user.findFirst({orderBy: {id: "asc"}});
     await prisma.user.update({
         where: {
             id: firstUser.id
         },
         data: {
-            roles: {
-                connect: [
-                    {id: admin.id}
-                ]
-            }
+            roles: Roles.ADMIN
         }
     });
 }

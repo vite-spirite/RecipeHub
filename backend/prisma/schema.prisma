@@ -18,18 +18,9 @@ enum Provider {
   TWITTER
 }
 
-enum CaslAction {
-  CREATE
-  READ
-  UPDATE
-  DELETE
-  MANAGE
-}
-
-enum CaslSubject {
-  Category
-  Recipe
-  User
+enum Roles {
+  ADMIN
+  CUSTOMER
 }
 
 model user {
@@ -45,29 +36,12 @@ model user {
   provider Provider @default(LOCAL)
   providerId String?
 
-  roles role[]
+  roles Roles @default(CUSTOMER)
 
   recipes recipe[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-}
-
-model role {
-  id Int @default(autoincrement()) @id
-  name String
-  users user[]
-  permissions permission[]
-}
-
-model permission {
-  id Int @default(autoincrement()) @id
-  subject CaslSubject
-  action CaslAction
-  condition Json?
-
-  roleId Int
-  role role @relation(fields: [roleId], references: [id])
 }
 
 model category {

@@ -20,7 +20,7 @@ export class TwitterStrategy extends PassportStrategy(Strategy, 'twitter') {
     }
 
     async validate(req: any, accessToken: string, refreshToken: string, profile: Profile, done: (error: any, user?: any, info?: any) => void) {
-        const user: Omit<User, 'password'|'id'|'createdAt'|'updatedAt'> = {
+        const user: Omit<User, 'password'|'id'|'createdAt'|'updatedAt'|'roles'> = {
             providerId: profile.id,
             provider: Provider.TWITTER,
             email: profile.emails ? profile.emails[0].value : null,

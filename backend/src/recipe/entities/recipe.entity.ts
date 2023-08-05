@@ -1,4 +1,4 @@
-import { CaslSubject, recipe } from "@prisma/client";
+import { recipe } from "@prisma/client";
 import { ApiProperty } from "@nestjs/swagger";
 import { User } from "src/users/entities/user.entity";
 import { RecipeIngrendient } from "./recipe-ingredient.entity";
@@ -48,9 +48,5 @@ export class Recipe implements recipe {
 
     constructor(recipe: recipe) {
         Object.assign(this, recipe);
-    }
-
-    static get modelName(): string {
-        return CaslSubject.Recipe;
     }
 }

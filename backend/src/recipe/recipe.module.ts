@@ -5,7 +5,8 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-yet';
-import { CaslModule } from 'src/casl/casl.module';
+import { CaslModule } from 'nest-casl';
+import { permissions } from './recipe.permissions';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { CaslModule } from 'src/casl/casl.module';
             }),
       }),
     }),
-    CaslModule,
+    CaslModule.forFeature({permissions}),
   ],
   controllers: [RecipeController],
   providers: [RecipeService, PrismaService],
