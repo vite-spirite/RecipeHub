@@ -6,6 +6,7 @@ import { User } from './entities/user.entity';
 import { PublicUserDto } from './dto/public-user.dto';
 import { Provider } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import { JwtPayload } from 'src/auth/dto/jwt-payload.dto';
 
 @Injectable()
 export class UsersService {
@@ -50,12 +51,36 @@ export class UsersService {
     return await this.prisma.user.findFirstOrThrow({where: {id}});
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
+  async update(user: JwtPayload, updateUserDto: UpdateUserDto): Promise<User> {
+    const _user = await this.findById(user.id);
+    const {passwordConfirmation, currentPassword, ...data} = updateUserDto;
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+    if(data.email) {
+      const user = await this.findByEmail(data.email);
+      if(user) {
+        throw new BadRequestException('Email already exists');
+      }
+    }
+
+    if(updateUserDto.password) {
+      if(!currentPassword || !passwordConfirmation) {
+        throw new BadRequestException('Current password and password confirmation are required');
+      }
+
+      const isPasswordValid = await this.comparePassword(currentPassword, _user.password);
+
+      if(!isPasswordValid) {
+        throw new BadRequestException('Current password is invalid');
+      }
+
+      if(updateUserDto.password !== updateUserDto.passwordConfirmation) {
+        throw new BadRequestException('Password confirmation does not match');
+      }
+
+      data.password = await this.hashPassword(updateUserDto.password);
+    }
+
+    return await this.prisma.user.update({where: {id: user.id}, data: updateUserDto});
   }
 
   async findByEmail(email: string): Promise<User|undefined> {
