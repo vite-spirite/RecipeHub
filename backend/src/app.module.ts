@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { AuthorizableRequest, AuthorizableUser, CaslModule } from 'nest-casl';
+import { AuthorizableUser, CaslModule } from 'nest-casl';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaService } from './prisma/prisma.service';
@@ -10,6 +10,7 @@ import { CategoryModule } from './category/category.module';
 import { RecipeModule } from './recipe/recipe.module';
 import { Roles } from '@prisma/client';
 import { User } from './users/entities/user.entity';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -21,7 +22,8 @@ import { User } from './users/entities/user.entity';
     UsersModule,
     AuthModule,
     CategoryModule,
-    RecipeModule
+    RecipeModule,
+    AdminModule
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],

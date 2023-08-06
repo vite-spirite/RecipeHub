@@ -4,7 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { User } from './entities/user.entity';
 import { PublicUserDto } from './dto/public-user.dto';
-import { Provider } from '@prisma/client';
+import { Provider, Roles } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { JwtPayload } from 'src/auth/dto/jwt-payload.dto';
 
@@ -63,14 +63,16 @@ export class UsersService {
     }
 
     if(updateUserDto.password) {
-      if(!currentPassword || !passwordConfirmation) {
-        throw new BadRequestException('Current password and password confirmation are required');
-      }
+      if(_user.password !== null) {
+        if(!currentPassword || !passwordConfirmation) {
+          throw new BadRequestException('Current password and password confirmation are required');
+        }
 
-      const isPasswordValid = await this.comparePassword(currentPassword, _user.password);
+        const isPasswordValid = await this.comparePassword(currentPassword, _user.password);
 
-      if(!isPasswordValid) {
-        throw new BadRequestException('Current password is invalid');
+        if(!isPasswordValid) {
+          throw new BadRequestException('Current password is invalid');
+        }
       }
 
       if(updateUserDto.password !== updateUserDto.passwordConfirmation) {
@@ -80,7 +82,7 @@ export class UsersService {
       data.password = await this.hashPassword(updateUserDto.password);
     }
 
-    return await this.prisma.user.update({where: {id: user.id}, data: updateUserDto});
+    return await this.prisma.user.update({where: {id: user.id}, data: data});
   }
 
   async findByEmail(email: string): Promise<User|undefined> {
@@ -100,5 +102,20 @@ export class UsersService {
   }
   async comparePassword(password: string, hash: string): Promise<boolean> {
     return await bcrypt.compare(password, hash);
+  }
+
+  async adminjsAuthentificate(email: string, password: string): Promise<any|null> {
+    const user = await this.findByEmail(email);
+
+    if(!user || user.roles !== Roles.ADMIN) {
+      return null;
+    }
+
+    const isPasswordValid = await this.comparePassword(password, user.password);
+    if(!isPasswordValid) {
+      return null;
+    }
+
+    return {email: user.email, title: `${user.firstName} ${user.lastName}`, id: user.id.toString(), avatarUrl: user.picture };
   }
 }
