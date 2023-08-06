@@ -5,14 +5,16 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Category } from './entities/catergoy.entity';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-import { AccessGuard } from 'nest-casl';
+import { AccessGuard, Actions, UseAbility } from 'nest-casl';
+import { CategoryHook } from './category.hook';
 
 @ApiTags('categories')
 @Controller('category')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AccessGuard)
+  @UseAbility(Actions.create, Category, CategoryHook)
   @ApiBearerAuth()
   @ApiBody({type: CreateCategoryDto})
   @Post()
@@ -25,14 +27,16 @@ export class CategoryController {
     return await this.categoryService.findAll();
   }
   
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AccessGuard)
+  @UseAbility(Actions.update, Category, CategoryHook)
   @ApiBearerAuth()
   @Patch(':id')
   async update(@Body() data: UpdateCategoryDto, @Param('id') id: number, @Req() req: any) {
     return await this.categoryService.update(+id, data);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AccessGuard)
+  @UseAbility(Actions.delete, Category, CategoryHook)
   @ApiBearerAuth()
   @Delete(':id')
   async remove(@Param('id') id: number, @Req() req: any) {

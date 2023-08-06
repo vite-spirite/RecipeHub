@@ -16,7 +16,7 @@ import { User } from './users/entities/user.entity';
     ConfigModule.forRoot({isGlobal: true}),
     CaslModule.forRoot<Roles, AuthorizableUser<Roles, number>, {user: User}>({
       superuserRole: Roles.ADMIN,
-      getUserFromRequest: (req) => {console.log(req.user); return {id: req.user.id, roles: [req.user.roles]}},
+      getUserFromRequest: (req) => ({id: req.user.id, roles: [req.user.roles]}),
     }),
     UsersModule,
     AuthModule,
