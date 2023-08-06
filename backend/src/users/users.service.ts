@@ -5,7 +5,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { User } from './entities/user.entity';
 import { PublicUserDto } from './dto/public-user.dto';
 import { Provider, Roles } from '@prisma/client';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { JwtPayload } from 'src/auth/dto/jwt-payload.dto';
 
 @Injectable()

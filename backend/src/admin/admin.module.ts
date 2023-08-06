@@ -4,7 +4,8 @@ import { UsersModule } from 'src/users/users.module';
 import { UsersService } from 'src/users/users.service';
 
 import slugify from 'slugify';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
     imports: [
@@ -18,9 +19,9 @@ import * as bcrypt from 'bcrypt';
             AdminJs.registerAdapter({ Database, Resource });
       
             return AdminModule.createAdminAsync({
-                imports: [UsersModule],
-                inject: [UsersService],
-                useFactory: async (userService: UsersService) => ({
+                imports: [UsersModule, ConfigModule],
+                inject: [UsersService, ConfigService],
+                useFactory: async (userService: UsersService, configService: ConfigService) => ({
                     adminJsOptions: {
                         rootPath: '/admin',
                         resources: [
@@ -83,14 +84,6 @@ import * as bcrypt from 'bcrypt';
                                 resource: {model: getModelByName('recipe'), client: prisma},
                                 options: {
                                     navigation: 'Recettes',
-                                    actions: {
-                                        new: {
-                                            isAccessible: false,
-                                        },
-                                        edit: {
-                                            isAccessible: false,
-                                        }
-                                    }
                                     //listProperties: ['id', 'name', 'categories', 'createdAt', 'updatedAt'],
                                 }
                             },
@@ -117,13 +110,13 @@ import * as bcrypt from 'bcrypt';
                     },
                     auth: {
                         authenticate: async (email, password) => {return Promise.resolve(userService.adminjsAuthentificate(email, password))},
-                        cookieName: 'adminjs',
-                        cookiePassword: 'secret',
+                        cookieName: configService.get('ADMIN_COOKIE_NAME'),
+                        cookiePassword: configService.get('ADMIN_COOKIE_PASSWORD'),
                     },
                     sessionOptions: {
                         resave: true,
                         saveUninitialized: true,
-                        secret: 'secret',
+                        secret: configService.get('ADMIN_COOKIE_PASSWORD'),
                     }
                 }),
             })
