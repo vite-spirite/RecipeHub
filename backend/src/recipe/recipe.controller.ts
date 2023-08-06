@@ -39,10 +39,11 @@ export class RecipeController {
   @UseGuards(JwtAuthGuard, AccessGuard)
   @UseAbility(Actions.update, Recipe, RecipeHook)
   @ApiBearerAuth()
+  
   @ApiOkResponse({ type: Recipe })
   @Patch(':id')
-  async update(@Param('id') id: number, @Body() updateRecipeDto: CreateRecipeDto, @User() user: JwtPayload): Promise<Recipe> {
-    return this.recipeService.findById(+id);
+  async update(@Param('id') id: number, @Body() updateRecipeDto: CreateRecipeDto): Promise<Recipe> {
+    return this.recipeService.update(+id, updateRecipeDto);
   }
 
   @UseGuards(JwtAuthGuard, AccessGuard)
@@ -50,8 +51,8 @@ export class RecipeController {
   @ApiBearerAuth()
   @ApiOkResponse({ type: Recipe })
   @Delete(':id')
-  async delete(@Param('id') id: number, @User() user: JwtPayload): Promise<Recipe> {
-    return this.recipeService.findById(+id);
+  async delete(@Param('id') id: number): Promise<void> {
+    return this.recipeService.delete(+id);
   }
 
 }

@@ -8,6 +8,7 @@ import { RecipeCompactDto } from './dto/recipe-compact.dto';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { JwtPayload } from 'src/auth/dto/jwt-payload.dto';
 import slugify from 'slugify';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class RecipeService {
@@ -106,6 +107,7 @@ export class RecipeService {
 
         const total = totalCached === undefined ? await this.prisma.recipe.count({
             where: {
+                deletedAt: null,
                 categories: {
                     some: {
                         id: category
@@ -169,5 +171,89 @@ export class RecipeService {
     async findById(id: number): Promise<Recipe> {
         const raw = await this.prisma.recipe.findUnique({where: {id}});
         return new Recipe(raw);
+    }
+
+    async delete(id: number, basket: boolean = true): Promise<void> {
+        if(basket) {
+            await this.prisma.recipe.update({data: {deletedAt: new Date()}, where: {id}});
+        } else {
+            await this.prisma.recipe.delete({where: {id}});
+        }
+
+        await this.cache.del(`recipe:${id}`);
+        await this.deleteCategoryCache(id);
+        return;
+    }
+
+    async update(id: number, recipe: CreateRecipeDto): Promise<Recipe> {
+        const _recipe = await this.findById(id);
+
+        const updateData: Prisma.recipeUpdateInput = {
+            name: recipe.name,
+            pictures: recipe.pictures,
+            preparationTime: recipe.preparationTime,
+            cookingTime: recipe.cookingTime,
+            growingTime: recipe.growingTime,
+            portions: recipe.portions,
+            difficulty: recipe.difficulty,
+            updatedAt: new Date(),
+            ingredients: {
+                deleteMany: _recipe.ingredients.map(ingredient => {
+                    return { id: ingredient.id }
+                }),
+                create: recipe.ingredients.map(ingredient => {
+                    if(ingredient.ingredientId) {
+                        return {
+                            quantity: ingredient.quantity,
+                            overrideUnit: ingredient.overrideUnit,
+                            ingredient: {
+                                connect: {
+                                    id: ingredient.ingredientId
+                                }
+                            }
+                        }
+                    } else {
+                        return {
+                            quantity: ingredient.quantity,
+                            overrideUnit: ingredient.overrideUnit,
+                            ingredient: {
+                                create: {
+                                    name: ingredient.createIngredient.name,
+                                    unit: ingredient.createIngredient.unit,
+                                    picture: ingredient.createIngredient.picture,
+                                }
+                            }
+                        }
+                    }
+                }),
+            },
+            steps: {
+                deleteMany: _recipe.steps.map(step => {
+                    return { id: step.id }
+                }),
+                create: recipe.steps.map(step => {
+                    return {
+                        step: step.step,
+                        time: step.time,
+                        description: step.description,
+
+                    }
+                }),
+            },
+            categories: {
+                disconnect: _recipe.categories.map(category => {
+                    return { id: category.id }
+                }),
+                connect: recipe.categoryIds.map(category => {
+                    return { id: category }
+                }),
+            },
+        };
+
+        await this.prisma.recipe.update({data: updateData, where: {id}});
+        await this.cache.del(`recipe:${id}`);
+        await this.deleteCategoryCache(id);
+
+        return await this.findById(id);
     }
 }

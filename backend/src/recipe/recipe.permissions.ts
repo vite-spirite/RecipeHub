@@ -13,8 +13,8 @@ export const permissions: Permissions<Roles, Subjects, Actions> = {
 
     CUSTOMER({user, can}) {
         can(Actions.create, Recipe);
-        can(Actions.update, Recipe, {userId: user.id});
-        can(Actions.delete, Recipe, {userId: user.id});
+        can(Actions.update, Recipe, {authorId: user.id});
+        can(Actions.delete, Recipe, {authorId: user.id});
     },
 
     ADMIN({can, cannot, extend}) {
