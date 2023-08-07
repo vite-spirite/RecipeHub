@@ -9,8 +9,8 @@
             <img src="hero-image.jpg" alt="hero image" class="w-1/4 rotate-45 rounded-full hidden md:block" />
         </Hero>
 
-        <Swiper :slides-per-view="'auto'" :space-between="15-2" class="mt-5 mx-2" :centered-slides="true" :mousewheel="true">
-            <SwiperSlide v-for="(item, i) in category.data.value" :key="item.id" class="!w-auto">
+        <Swiper v-if="category.length > 0" :slides-per-view="'auto'" :space-between="15-2" class="mt-5 mx-2" :centered-slides="true" :mousewheel="true">
+            <SwiperSlide v-for="(item, i) in category" :key="item.id" class="!w-auto">
                 <a href="#" :class="{'text-2xl font-secondary font-[600] w-auto px-3 py-3 rounded-md block transition-all duration-500': true, 'text-slate-900 bg-slate-100': selectedCategory != i, 'bg-orange-400 text-slate-100': selectedCategory == i}" @click.prevent="selectedCategory = i">{{ item.name }}</a>
             </SwiperSlide>
         </Swiper>
@@ -18,15 +18,10 @@
 </template>
 
 <script setup lang="ts">
-const category = await useFetch<{name: string, id: number}[]>('http://localhost:3000/category', 
-{
-  method: 'GET',
-  headers: {
-    'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*',
-    'Accept': 'application/json'
-  }
-});
+import { useCategory } from '~/store/category';
 
 const selectedCategory = ref(0);
+
+const {fetchCategories} = useCategory();
+const category = await fetchCategories();
 </script>

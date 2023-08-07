@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { CategoryService } from './category.service';
-import { ApiBody, ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiBearerAuth, ApiTags, ApiOkResponse } from '@nestjs/swagger';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Category } from './entities/catergoy.entity';
@@ -23,6 +23,7 @@ export class CategoryController {
   }
 
   @Get()
+  @ApiOkResponse({type: [Category]})
   async findAll(): Promise<Category[]> {
     return await this.categoryService.findAll();
   }

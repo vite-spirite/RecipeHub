@@ -1,5 +1,5 @@
 import { category } from "@prisma/client";
-import {ApiProperty} from "@nestjs/swagger";
+import { ApiProperty } from "@nestjs/swagger";
 
 export class Category implements category {
     @ApiProperty({type: 'integer'})
