@@ -17,4 +17,88 @@
   input {
     @apply font-secondary font-medium text-base;
   }
+
+  .card {
+    @apply bg-white rounded-xl shadow-lg p-6;
+  }
+
+  .card-title {
+    @apply font-title font-bold text-2xl;
+  }
+
+  .card-subtitle {
+    @apply font-secondary font-medium text-base;
+  }
+
+  .card-content {
+    @apply font-secondary font-normal text-base;
+  }
+
+  .card-footer {
+    @apply font-secondary font-medium text-base;
+  }
+
+  .card-footer a {
+    @apply font-secondary font-medium text-base text-orange-500;
+  }
+
+  .card-footer a:hover {
+    @apply font-secondary font-medium text-base text-orange-600;
+  }
+
+  .card-footer button {
+    @apply font-primary font-medium text-base text-orange-400 border-2 border-orange-400 rounded-lg px-4 py-2 focus:outline-none focus:border-orange-600 bg-orange-500/5 transition-all duration-500;
+  }
+
+  .divider {
+    @apply font-secondary font-medium text-base text-gray-400 w-full flex items-center justify-center my-6 relative;
+  }
+
+  .divider::before, .divider::after {
+    @apply flex-1 border-t-2 border-gray-300 content-[''];
+  }
+
+  .divider::after {
+    @apply ml-4;
+  }
+
+  .divider::before {
+    @apply mr-4;
+  }
+
+  .input-control {
+    @apply flex flex-col space-y-3 justify-start items-start w-full;
+  }
+
+  .input-control .input {
+    @apply font-secondary font-medium text-base text-gray-600 border-2 border-gray-300 rounded-lg p-4 w-full focus:outline-none focus:border-orange-500;
+  }
+
+  .input-control .input[error=true] {
+    @apply !border-red-500;
+  }
+
+  .input-control label {
+    @apply font-secondary font-medium text-base text-gray-600 font-bold;
+  }
+
+  .input-control .error-text-alt {
+    @apply text-red-500 text-sm font-title font-medium w-full text-center;
+  }
+
+  button[disabled], button[loading=true] {
+    @apply cursor-not-allowed bg-slate-400/5 text-slate-500 border-transparent;
+  }
+
+  .alert {
+    @apply font-secondary font-medium text-base text-gray-600 rounded-lg p-4 w-full flex flex-row items-center justify-start space-x-4;
+  }
+
+  .alert.error {
+    @apply bg-red-500 text-white;
+  }
+
+  a.ghost {
+    @apply font-secondary font-medium text-base text-orange-500;
+  }
 }

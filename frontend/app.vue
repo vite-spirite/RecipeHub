@@ -1,22 +1,54 @@
 <template>
   <div>
     <Header />
-    <NuxtPage />
+    <NuxtPage v-if="!loading" />
   </div>
 </template>
 
-
 <script setup lang="ts">
+import { useUser } from '~/store/useUser';
+const loading = ref(true);
 
-const data = await useFetch('http://localhost:3000/category', 
-{
-  method: 'GET',
-  headers: {
-    'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*',
-    'Accept': 'application/json'
-  }
+const {refreshToken} = useUser();
+
+if(refreshToken) {
+  await useUser().refresh(true);
+}
+
+useSeoMeta({
+  title: 'RecipeHub',
+  description: 'The best recipes in the world',
+  ogImage: 'http://localhost:3001/hero-image.jpg',
+  ogTitle: 'RecipeHub',
+  ogDescription: 'The best recipes in the world',
+  ogUrl: 'http://localhost:3001',
+  ogSiteName: 'RecipeHub',
+  twitterCard: 'summary_large_image',
+  twitterSite: '@recipehub',
+  twitterCreator: '@recipehub',
+  twitterImage: 'http://localhost:3001/hero-image.jpg',
+  twitterTitle: 'RecipeHub',
+  twitterDescription: 'The best recipes in the world',
 })
 
-//console.log(data.data.value)
+useHead({
+  htmlAttrs: {
+    lang: 'en',
+  },
+  meta: [
+    {
+      name: 'viewport',
+      content: 'width=device-width, initial-scale=1',
+    },
+  ],
+  link: [
+    {
+      rel: 'icon',
+      type: 'image/x-icon',
+      href: 'http://localhost:3001/favicon.ico',
+    },
+  ],
+})
+
+loading.value = false;
 </script>

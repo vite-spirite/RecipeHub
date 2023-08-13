@@ -1,28 +1,58 @@
+import { AsyncData } from "nuxt/app";
 import { defineStore } from "pinia";
+
+import { FetchError } from 'ohmyfetch';
+import { useUser } from "./useUser";
 
 export const useApi = defineStore('api', () => {
     const runtimeConfig = useRuntimeConfig();
     
     const apiUrl = runtimeConfig.public.apiUrl;
 
-    const refreshToken = useCookie(runtimeConfig.public.cookie.refresh);
-    const accessToken = useCookie(runtimeConfig.public.cookie.access);
+    const fetch = async <T = any>(route: string, method: "GET"|"POST"|"PATCH"|"DELETE", includeBearer: boolean = false, body?: any): Promise<AsyncData<T, FetchError>> => {
 
-    const fetch = <T = any>(route: string, method: "GET"|"POST"|"PATCH"|"DELETE", includeBearer: boolean = false, body?: any) => {
+        const {setAccessToken, accessToken, refreshToken} = useUser();
+
         const headers: {[K: string]: string} = {
             'Content-Type': 'application/json',
         };
 
         if (includeBearer && accessToken) {
-            headers['Authorization'] = "Bearer " + accessToken.value;
+            headers['Authorization'] = "Bearer " + accessToken;
         };
 
-        return useFetch(apiUrl + route, {
-            method: method,
+        return await useFetch(apiUrl+route, {
+            method,
             headers,
-            body: JSON.stringify(body)
-        });
+            body
+        }) as AsyncData<T, FetchError>;
     }
 
-    return {fetch}
+    const fetchAsync = async <T = any>(route: string, method: "GET"|"POST"|"PATCH"|"DELETE", includeBearer: boolean = false, body?: any): Promise<T|FetchError> => {
+        const headers: {[K: string]: string} = {
+            'Content-Type': 'application/json',
+        }
+
+        if(includeBearer) { 
+            headers['Authorization'] = "Bearer " + useUser().accessToken;
+        }
+
+        try {
+            const response = await $fetch<T>(apiUrl+route, {method, headers, body});
+
+            return response;
+        }
+        catch(e) {
+            const error = e as FetchError<T>;
+
+            if(error.status === 401 && includeBearer) {
+                await useUser().refresh();
+                return await fetchAsync<T>(route, method, includeBearer, body);
+            }
+
+            throw error;
+        }
+    }
+
+    return {fetch, fetchAsync}
 });

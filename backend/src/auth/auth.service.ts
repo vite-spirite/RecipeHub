@@ -23,9 +23,13 @@ export class AuthService {
     }
 
     async login(user: Omit<User, 'password'|'picture'>): Promise<TokensAuthDto> {
+        const _user = await this.userService.findById(user.id);
+
+        const {password, ...data} = _user;
+
         return {
             refreshToken: await this.generateRefreshToken(user),
-            accessToken: this.jwtService.sign(user),
+            accessToken: await this.generateAccessToken(data),
         }
     }
 
@@ -85,7 +89,7 @@ export class AuthService {
         return this.jwtService.sign({id: user.id, iter_refresh}, {expiresIn: '7d'});
     }
 
-    private async generateAccessToken(user: Omit<User, 'password'|'picture'>): Promise<string> {
+    private async generateAccessToken(user: Omit<User, 'password'>): Promise<string> {
         return this.jwtService.sign(user);
     }
 }

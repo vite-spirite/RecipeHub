@@ -13,14 +13,17 @@
     "@nuxtjs/tailwindcss": "^6.8.0",
     "@pinia/nuxt": "^0.4.11",
     "@types/node": "^18.17.1",
+    "@vee-validate/nuxt": "^4.11.1",
     "nuxt": "^3.6.5",
     "nuxt-icon": "^0.4.2",
-    "nuxt-swiper": "^1.2.0"
+    "nuxt-swiper": "^1.2.0",
+    "ohmyfetch": "^0.4.21"
   },
   "overrides": {
     "vue": "latest"
   },
   "dependencies": {
-    "pinia": "^2.1.6"
+    "pinia": "^2.1.6",
+    "yup": "^1.2.0"
   }
 }

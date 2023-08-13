@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Request, Res, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiBody, ApiOkResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { CredentialsAuthDto } from './dto/credentials-auth.dto';
@@ -11,6 +11,7 @@ import { FacebookAuthGuard } from './guards/facebook-auth.guard';
 import { GithubAuthGuard } from './guards/github-auth.guard';
 import { TwitterStrategy } from './strategy/twitter.strategy';
 import { TwitterAuthGuard } from './guards/twitter-auth.guard';
+import { Response } from 'express';
 
 @ApiTags('authentification')
 @Controller('auth')
@@ -45,8 +46,9 @@ export class AuthController {
 
     @UseGuards(GoogleAuthGuard)
     @Get("google/redirect")
-    async googleAuthRedirect(@Request() req) {
-        return await this.authService.signInWithSocialProvider(req.user);
+    async googleAuthRedirect(@Request() req, @Res() res: Response) {
+        const _token = await this.authService.signInWithSocialProvider(req.user);
+        res.redirect(`http://localhost:3001/auth/popup/${_token.refreshToken}`);
     }
 
     @UseGuards(FacebookAuthGuard)
@@ -55,8 +57,9 @@ export class AuthController {
 
     @UseGuards(FacebookAuthGuard)
     @Get("facebook/redirect")
-    async facebookAuthRedirect(@Request() req) {
-        return await this.authService.signInWithSocialProvider(req.user);
+    async facebookAuthRedirect(@Request() req, @Res() res : Response) {
+        const _token = await this.authService.signInWithSocialProvider(req.user);
+        res.redirect(`http://localhost:3001/auth/popup/${_token.refreshToken}`);
     }
 
     @UseGuards(GithubAuthGuard)
@@ -65,8 +68,9 @@ export class AuthController {
 
     @UseGuards(GithubAuthGuard)
     @Get("github/redirect")
-    async githubAuthRedirect(@Request() req) {
-        return await this.authService.signInWithSocialProvider(req.user);
+    async githubAuthRedirect(@Request() req, @Res() res: Response) {
+        const _token = await this.authService.signInWithSocialProvider(req.user);
+        res.redirect(`http://localhost:3001/auth/popup/${_token.refreshToken}`);
     }
 
     @UseGuards(TwitterAuthGuard)
@@ -75,8 +79,9 @@ export class AuthController {
 
     @UseGuards(TwitterAuthGuard)
     @Get("twitter/redirect")
-    async twitterAuthRedirect(@Request() req) {
-        return await this.authService.signInWithSocialProvider(req.user);
+    async twitterAuthRedirect(@Request() req, @Res() res: Response) {
+        const _token = await this.authService.signInWithSocialProvider(req.user);
+        res.redirect(`http://localhost:3001/auth/popup/${_token.refreshToken}`);
     }
 
 }
