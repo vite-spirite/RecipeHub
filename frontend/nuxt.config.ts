@@ -4,8 +4,10 @@ export default defineNuxtConfig({
   components: [
     {path: '~/components', extensions: ['vue']},
   ],
-
-  ssr: false,
+  site: {
+    url: 'http://localhost:3001',
+  },
+  ssr: true,
   routeRules: {
     '/auth/popup/**': {ssr: false}
   },
@@ -15,6 +17,9 @@ export default defineNuxtConfig({
     'nuxt-swiper',
     '@pinia/nuxt',
     '@vee-validate/nuxt',
+    //'@nuxtjs/robots',
+    'nuxt-simple-sitemap',
+    'nuxt-simple-robots',
   ],
   tailwindcss: {
     configPath: '~/tailwind.config.ts',
@@ -33,5 +38,11 @@ export default defineNuxtConfig({
         refresh: 'token.refresh',
       },
     }
+  },
+  robots: {
+    UserAgent: '*',
+    Disallow: '/auth',
+    allowAll: true,
+    Sitemap: 'http://localhost:3001/sitemap.xml'
   },
 })

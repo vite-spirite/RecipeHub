@@ -10,12 +10,15 @@
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
+    "@nuxtjs/robots": "^3.0.0",
     "@nuxtjs/tailwindcss": "^6.8.0",
     "@pinia/nuxt": "^0.4.11",
     "@types/node": "^18.17.1",
     "@vee-validate/nuxt": "^4.11.1",
     "nuxt": "^3.6.5",
     "nuxt-icon": "^0.4.2",
+    "nuxt-simple-robots": "^3.1.0",
+    "nuxt-simple-sitemap": "^3.1.5",
     "nuxt-swiper": "^1.2.0",
     "ohmyfetch": "^0.4.21"
   },

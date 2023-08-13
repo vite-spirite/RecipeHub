@@ -21,6 +21,12 @@ export class RecipeController {
     return this.recipeService.getCompleteRecipe(+id);
   }
 
+  @ApiOkResponse({ type: Recipe })
+  @Get('slug/:slug')
+  async getCompleteRecipeBySlug(@Param('slug') slug: string) {
+    return this.recipeService.getCompleteRecipeBySlug(slug);
+  }
+
   @ApiOkResponse({ type: RecipePaginateDto })
   @Get('category/:id/:page')
   async getRecipesByCategory(@Param('id') id: string, @Param('page') page: number): Promise<RecipePaginateDto> { 

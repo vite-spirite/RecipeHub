@@ -104,6 +104,30 @@ export class RecipeService {
         return recipe;
     }
 
+    async getCompleteRecipeBySlug(slug: string): Promise<Recipe> {
+        const caching = await this.cache.get<Recipe>(`recipe:${slug}`);
+
+        if(caching) {
+            return caching;
+        }
+
+        const recipe = (await this.prisma.recipe.findUnique({
+            where: {slug},
+            include: {
+                ingredients: {
+                    include: {
+                        ingredient: true
+                    }
+                },
+                steps: true,
+                author: {select: {id: true, firstName: true, lastName: true, picture: true, createdAt: true, updatedAt: true}}
+            }
+        })) as unknown as Recipe;
+
+        await this.cache.set<Recipe>(`recipe:${slug}`, recipe, parseInt(this.config.get('REDIS_CACHE_RECIPE_TTL')));
+        return recipe;
+    }
+
     async getRecipesByCategory(category: number, page: number): Promise<RecipePaginateDto> {
         const perPage = parseInt(this.config.get('RECIPE_PER_PAGE'));
         const skip = (page - 1) * perPage < 0 ? 0 : (page - 1) * perPage;

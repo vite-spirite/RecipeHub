@@ -26,7 +26,7 @@
                 <span class="text-sm">{{ recipe.author.firstName }} {{ recipe.author.lastName }}</span>
             </div>
 
-            <NuxtLink :to="`/category/${category.slug}/recipe/${recipe.slug}`" class="ghost">View recipe</NuxtLink>
+            <NuxtLink :to="`/recipe/${recipe.slug}`" class="ghost">View recipe</NuxtLink>
         </div>
     </div>
 </template>
