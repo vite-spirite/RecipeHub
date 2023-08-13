@@ -74,6 +74,31 @@ export const useUser = defineStore('user', () => {
             return e as FetchError;
         }
     }
+
+    const register = async (email: string, password: string, passwordConfirmation: string, firstName: string, lastName: string) => {
+        try {
+            const response = await useApi().fetchAsync<UserDto>('/users', 'POST', false, {email, password, passwordConfirmation, firstName, lastName});
+            
+            if(!(response instanceof Error)) {
+
+                const _login = await login(email, password);
+
+                if(_login instanceof Error) {
+                    throw _login;
+                }
+
+                setRefreshToken(_login.refreshToken);
+                setAccessToken(_login.accessToken);
+
+                return await auth();
+            }
+
+            throw response;
+        }
+        catch(e) {
+            return e as FetchError;
+        }
+    }
     
     const auth = async () => {
         if(refreshToken.value === undefined || refreshToken.value === '') {
@@ -104,7 +129,8 @@ export const useUser = defineStore('user', () => {
         setAccessToken, 
         accessToken, 
         refreshToken, 
-        login, 
+        login,
+        register,
         logout, 
         isAuth, 
         auth, 

@@ -28,9 +28,16 @@ export class UsersService {
     else {
       data.password = null;
     }
-
-    const user = await this.prisma.user.create({data});
-    return user
+    try {
+      const user = await this.prisma.user.create({data});
+      return user
+    }
+    catch(error) {
+      if(error.code === 'P2002') {
+        throw new BadRequestException('Email already exists');
+      }
+      throw error;
+    }
   }
 
   async findAll(): Promise<PublicUserDto[]> {

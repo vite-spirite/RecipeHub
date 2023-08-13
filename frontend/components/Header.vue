@@ -13,7 +13,7 @@
 
         <div v-if="!isAuth" class="hidden sm:flex user flex-row justify-between space-x-2 text-xl">
             <NuxtLink to="/auth/login">Login</NuxtLink>
-            <a href="/register">Register</a>
+            <NuxtLink to="/auth/register">Signup</NuxtLink>
         </div>
         <div v-else class="hidden sm:flex user flex-row justify-between space-x-2 text-xl">
             <button class="bg-none font-primary text-slate-500 flex flex-row space-x-3 items-center justify-center" @click="logout"><img :src="me?.picture" class="h-10 rounded-full"/> <span class="font-primary text-bold hidden md:inline">{{ me?.firstName }} {{ me?.lastName }}</span></button>
