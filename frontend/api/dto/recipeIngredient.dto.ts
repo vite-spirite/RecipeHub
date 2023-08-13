@@ -2,7 +2,7 @@ import { IngredientDto } from "./ingredient.dto";
 
 export interface RecipeIngredientDto {
     id: number;
-    ingredients: IngredientDto;
+    ingredient: IngredientDto;
     quantity: number;
     overrideUnit?: string;
 }
