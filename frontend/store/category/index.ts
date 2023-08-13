@@ -1,15 +1,53 @@
 import { defineStore } from 'pinia'
 import {useApi} from '../useApi'
-import { CategoryDto } from './category.dto';
+import { CategoryDto } from '~/api/dto/category.dto';
+import { RecipePaginateDto } from 'api/dto/recipePaginate.dto';
+
+type Category = CategoryDto & {
+    recipes: RecipePaginateDto
+}
 
 export const useCategory = defineStore('category', () => {
     const api = useApi();
 
+    const categories = ref<Category[]>([]);
+
     const fetchCategories = async () => {
-        const response = await api.fetch<CategoryDto[]>('/category', 'GET');
+        if(categories.value.length > 0) return Promise.resolve(categories.value);
+        const response = await api.fetchAsync<CategoryDto[]>('/category', 'GET');
         
-        return response;
+        if(response instanceof Error) return Promise.reject(response);
+
+        categories.value = response.map(category => ({...category, recipes: {data: [], page: 0, perPage: 0, total: 0, lastPage: 0}}));
+
+        return Promise.resolve(categories.value);
     }
 
-    return { fetchCategories};
+    const fetchRecipes = async (category: Category, page: number = 1) => {
+
+        if(category.recipes.lastPage !== 0 && page > category.recipes.lastPage) {
+            return Promise.resolve(category);
+        }
+
+
+        const response = await api.fetch<RecipePaginateDto>(`/recipe/category/${category.id}/${page}`, 'GET');
+
+        const _c = categories.value.find(c => c.id === category.id);
+
+        if(!_c) return;
+
+        if(response instanceof Error) return Promise.reject(response);
+
+        _c.recipes.data.push(...response.data.value.data);
+        _c.recipes.perPage = response.data.value.perPage;
+        _c.recipes.total = response.data.value.total;
+        _c.recipes.lastPage = response.data.value.lastPage;
+        _c.recipes.page = page;
+
+        console.log(_c);
+
+        return Promise.resolve(_c);
+    }
+
+    return {categories, fetchCategories, fetchRecipes};
 });

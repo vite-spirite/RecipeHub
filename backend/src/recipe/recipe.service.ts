@@ -71,6 +71,11 @@ export class RecipeService {
         });
 
         await this.prisma.recipe.update({data: {slug: slugify(`${_recipe.id}-${_recipe.name}`)}, where: {id: _recipe.id}});
+
+        recipe.categoryIds.forEach(async categoryId => {
+            await this.deleteCategoryCache(categoryId);
+        });
+
         return await this.getCompleteRecipe(_recipe.id);
     }
 
@@ -104,17 +109,13 @@ export class RecipeService {
         const skip = (page - 1) * perPage < 0 ? 0 : (page - 1) * perPage;
 
         const totalCached = await this.getTotalRecipesCachedByCategory(category);
+        const dbTotal = await this.prisma.recipe.count({where: {deletedAt: null, categories: {some: {id: category}}}});
 
-        const total = totalCached === undefined ? await this.prisma.recipe.count({
-            where: {
-                deletedAt: null,
-                categories: {
-                    some: {
-                        id: category
-                    }
-                }
-            }
-        }) : totalCached;
+        if(totalCached !== undefined && totalCached !== dbTotal) {
+            await this.deleteCategoryCache(category, Math.ceil(totalCached / perPage));
+        }
+
+        const total = totalCached === undefined ? dbTotal : totalCached;
 
         const lastPage = Math.ceil(total / perPage);
 
@@ -148,8 +149,17 @@ export class RecipeService {
         }
     }
 
-    async deleteCategoryCache(categorie: number): Promise<void> {
-        return await this.cache.del(`recipe:category:${categorie}:*`);
+    async deleteCategoryCache(categorie: number, page: number|undefined = undefined): Promise<void> {
+
+        if(page === undefined) {
+            page = await this.countTotalPage(categorie);
+        }
+
+        for(let i = 1; i <= page; i++) {
+            await this.cache.del(`recipe:category:${categorie}:page:${i}`);
+        }
+        
+        return await this.cache.del(`recipe:category:${categorie}:total`);
     }
 
     private async getTotalRecipesCachedByCategory(category: number): Promise<number|undefined> {
@@ -255,5 +265,15 @@ export class RecipeService {
         await this.deleteCategoryCache(id);
 
         return await this.findById(id);
+    }
+
+    async countTotalPage(category: number, perPage: number|undefined = undefined): Promise<number> {
+
+        if(perPage === undefined) {
+            perPage = parseInt(this.config.get('RECIPE_PER_PAGE'));
+        }
+        
+        const total = await this.prisma.recipe.count({where: {deletedAt: null, categories: {some: {id: category}}}});
+        return Math.ceil(total / perPage);
     }
 }
