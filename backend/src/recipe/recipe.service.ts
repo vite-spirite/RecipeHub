@@ -4,7 +4,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { Recipe } from './entities/recipe.entity';
 import { ConfigService } from '@nestjs/config';
 import { RecipePaginateDto } from './dto/recipe-paginate.dto';
-import { RecipeCompactDto } from './dto/recipe-compact.dto';
+import { RecipeCompactDto, RecipeCompactWithoutAuthor } from './dto/recipe-compact.dto';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { JwtPayload } from 'src/auth/dto/jwt-payload.dto';
 import slugify from 'slugify';
@@ -126,6 +126,10 @@ export class RecipeService {
 
         await this.cache.set<Recipe>(`recipe:${slug}`, recipe, parseInt(this.config.get('REDIS_CACHE_RECIPE_TTL')));
         return recipe;
+    }
+
+    async getRecipeByUser(id: number): Promise<RecipeCompactWithoutAuthor[]> {
+        return await this.prisma.recipe.findMany({where: {authorId: id, deletedAt: null}});
     }
 
     async getRecipesByCategory(category: number, page: number): Promise<RecipePaginateDto> {

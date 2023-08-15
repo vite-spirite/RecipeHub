@@ -9,6 +9,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { User } from 'src/auth/decorators/user.decorators';
 import { AccessGuard, Actions, UseAbility } from 'nest-casl';
 import { RecipeHook } from './recipe.hook';
+import { RecipeCompactWithoutAuthor } from './dto/recipe-compact.dto';
 
 @ApiTags('recipe')
 @Controller('recipe')
@@ -25,6 +26,12 @@ export class RecipeController {
   @Get('slug/:slug')
   async getCompleteRecipeBySlug(@Param('slug') slug: string) {
     return this.recipeService.getCompleteRecipeBySlug(slug);
+  }
+
+  @ApiOkResponse({ type: RecipeCompactWithoutAuthor })
+  @Get('user/:id')
+  async getUserRecipe(@Param('id') id: number) {
+    return this.recipeService.getRecipeByUser(+id);
   }
 
   @ApiOkResponse({ type: RecipePaginateDto })
