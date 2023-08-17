@@ -2,6 +2,8 @@ import {useApi} from "@/store/useApi";
 import {TokensDto} from "@/api/dto/tokens.dto";
 import { UserDto } from "@/api/dto/user.dto";
 import { FetchError } from "ohmyfetch";
+import { CompactRecipeDto } from "api/dto/compactRecipe.dto";
+import { UpdateUserDto } from "api/dto/updateUser.dto";
 
 export const useUser = defineStore('user', () => {
     const refreshTokenName = useRuntimeConfig().public.cookie.refresh;
@@ -9,6 +11,8 @@ export const useUser = defineStore('user', () => {
     const accessToken = ref('');
     const isAuth = ref(false);
     const me: Ref<UserDto|null> = ref(null);
+
+    const meRecipes: Ref<Omit<CompactRecipeDto[], 'author'>> = ref([])
 
     const refreshToken = useCookie<string>(refreshTokenName, {expires: new Date(new Date().setMonth(new Date().getMonth() + 1)), default: () => ''});
 
@@ -99,6 +103,37 @@ export const useUser = defineStore('user', () => {
             return e as FetchError;
         }
     }
+
+    const update = async (update: Partial<UpdateUserDto>) => {
+        try {
+
+            let body: any = {};
+
+            if(update.email) {
+                body.email = update.email;
+            }
+
+            console.log(update);
+
+            if(update.password) {
+                if(update.password && update.currentPassword && update.passwordConfirmation) {
+                    body = {...body, currentPassword: update.currentPassword, password: update.password, passwordConfirmation: update.passwordConfirmation};
+                }
+                else {
+                    return Promise.reject('password fields incomplet')
+                }
+            }
+
+            const response = await useApi().fetchAsync('/users', 'PATCH', true, body)
+            
+            if(response.status === 400) {
+                throw response;
+            }
+        }
+        catch(e) {
+            throw e;
+        }
+    }
     
     const auth = async () => {
         if(refreshToken.value === undefined || refreshToken.value === '') {
@@ -124,6 +159,13 @@ export const useUser = defineStore('user', () => {
         me.value = null;
     }
 
+    const loadMeRecipes = async () => {
+        const response = await useApi().fetch(`/recipe/user/${me.value?.id}`, 'GET', false);
+        meRecipes.value = response.data.value;
+
+        return response;
+    }
+
     return {
         setRefreshToken, 
         setAccessToken, 
@@ -135,6 +177,9 @@ export const useUser = defineStore('user', () => {
         isAuth, 
         auth, 
         me, 
-        refresh
+        refresh,
+        meRecipes,
+        loadMeRecipes,
+        update
     }
 })

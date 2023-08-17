@@ -33,6 +33,7 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
+      website: process.env.WEBSITE_URL || 'http://localhost:3001/',
       apiUrl: 'http://localhost:3000',
       cookie: {
         refresh: 'token.refresh',
@@ -40,9 +41,8 @@ export default defineNuxtConfig({
     }
   },
   robots: {
-    UserAgent: '*',
-    Disallow: '/auth',
-    allowAll: true,
-    Sitemap: 'http://localhost:3001/sitemap.xml'
+    disallow: '/auth',
+    allow: ['*'],
+    sitemap: (process.env.WEBSITE_URL || 'http://localhost:3001/') + 'sitemap.xml'
   },
 })

@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full flex flex-row justify-between items-center sm:px-6 px-4 py-2 bg-orange-300 rounded-b-xl space-x-5">
+    <div class="w-full flex flex-row justify-between items-center sm:px-6 px-4 py-2 bg-orange-300 space-x-5">
         <div class="title">
             <NuxtLink to="/">
                 <img src="/logo.png" alt="logo" class="h-10" />

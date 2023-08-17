@@ -6,6 +6,7 @@ import { useUser } from "./useUser";
 
 export const useApi = defineStore('api', () => {
     const runtimeConfig = useRuntimeConfig();
+    console.log(runtimeConfig.public.website);
     
     const apiUrl = runtimeConfig.public.apiUrl;
 

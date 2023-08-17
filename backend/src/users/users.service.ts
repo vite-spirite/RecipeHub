@@ -59,6 +59,7 @@ export class UsersService {
   }
 
   async update(user: JwtPayload, updateUserDto: UpdateUserDto): Promise<User> {
+    console.log(updateUserDto);
     const _user = await this.findById(user.id);
     const {passwordConfirmation, currentPassword, ...data} = updateUserDto;
 

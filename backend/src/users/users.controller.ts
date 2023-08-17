@@ -52,7 +52,12 @@ export class UsersController {
   @ApiBearerAuth()
   @ApiBadRequestResponse({description: 'invalide parameters, password confirmation does not match or email already exists'})
   async update(@UserDecorator() user: JwtPayload, @Body() updateUserDto: UpdateUserDto) {
-    return await this.usersService.update(user, updateUserDto);
+    try {
+      return await this.usersService.update(user, updateUserDto);
+    }
+    catch(e) {
+      return e;
+    }
   }
 
   

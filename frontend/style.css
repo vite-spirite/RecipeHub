@@ -31,7 +31,7 @@
   }
 
   .card-content {
-    @apply font-secondary font-normal text-base;
+    @apply font-secondary font-normal text-base py-5;
   }
 
   .card-footer {
@@ -87,7 +87,7 @@
   }
 
   button[disabled], button[loading=true] {
-    @apply cursor-not-allowed bg-slate-400/5 text-slate-500 border-transparent;
+    @apply cursor-not-allowed bg-slate-400/5 text-slate-500 border-transparent hover:bg-slate-400/10;
   }
 
   .alert {
@@ -100,5 +100,9 @@
 
   a.ghost {
     @apply font-secondary font-medium text-base text-orange-500;
+  }
+
+  .divider_h {
+    @apply w-full h-[2px] bg-orange-100 block;
   }
 }
