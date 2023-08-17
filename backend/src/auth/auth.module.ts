@@ -18,6 +18,7 @@ import { TwitterStrategy } from './strategy/twitter.strategy';
     imports: [
         PassportModule,
         UsersModule,
+        ConfigModule,
         CacheModule.registerAsync({
             imports: [ConfigModule],
             inject: [ConfigService],
