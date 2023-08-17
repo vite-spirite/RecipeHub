@@ -54,7 +54,7 @@ export class UsersService {
     return users as PublicUserDto[];
   }
 
-  async findOne(id: number): Promise<PublicUserDto|undefined> {
+  async findOne(id: number): Promise<User|undefined> {
     return await this.prisma.user.findFirstOrThrow({where: {id}});
   }
 

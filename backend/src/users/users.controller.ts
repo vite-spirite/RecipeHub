@@ -33,8 +33,9 @@ export class UsersController {
   @ApiFoundResponse({type: PublicUserDto})
   async findOne(@Param('id') id: string): Promise<PublicUserDto|null> {
     try {
-      const user = await this.usersService.findOne(+id);
-      return user;
+      const data = await this.usersService.findOne(+id);
+      const {password, email, roles, provider, providerId, ...user} = data;
+      return user as PublicUserDto;
     }
     catch(e) {
       if(e instanceof Prisma.PrismaClientKnownRequestError) {
