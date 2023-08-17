@@ -113,8 +113,6 @@ export const useUser = defineStore('user', () => {
                 body.email = update.email;
             }
 
-            console.log(update);
-
             if(update.password) {
                 if(update.password && update.currentPassword && update.passwordConfirmation) {
                     body = {...body, currentPassword: update.currentPassword, password: update.password, passwordConfirmation: update.passwordConfirmation};
