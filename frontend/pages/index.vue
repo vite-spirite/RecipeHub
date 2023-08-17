@@ -6,7 +6,7 @@
                 <p class="text-2xl text-slate-700">The best recipes in the world</p>
             </div>
 
-            <img src="hero-image.jpg" alt="hero image" class="w-1/4 rotate-45 rounded-full hidden md:block" />
+            <img src="/hero-image.jpg" alt="hero image" class="w-1/4 rotate-45 rounded-full hidden md:block" />
         </Hero>
 
         <Swiper v-if="categories && categories.length > 0" :slides-per-view="'auto'" :space-between="15-2" class="mt-5 mx-2" :centered-slides="true" :mousewheel="true">
@@ -16,7 +16,7 @@
         </Swiper>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mt-5 px-5">
-            <Recipe v-for="recipe in categories[selectedCategory].recipes.data" :key="recipe.slug" :recipe="recipe" :category="categories[selectedCategory]" />
+            <Recipe v-for="recipe in categories[selectedCategory].recipes.data" :key="recipe.slug" :recipe="recipe"/>
         </div>
 
         <div class="p-5">

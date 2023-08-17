@@ -32,16 +32,15 @@
 </template>
 
 <script setup lang="ts">
-import { CategoryDto } from 'api/dto/category.dto';
 import { CompactRecipeDto } from 'api/dto/compactRecipe.dto';
 import moment from 'moment';
 
 const {recipe} = defineProps<{
     recipe: CompactRecipeDto;
-    category: CategoryDto
 }>();
 
 const cookingTime = computed(() => {
-    return moment.duration(recipe.preparationTime + recipe.cookingTime + recipe.growingTime, 'seconds').humanize();
+    const duration = moment.duration(recipe.preparationTime + recipe.cookingTime + recipe.growingTime, 'seconds');
+    return moment(duration.asMilliseconds()).format('HH:mm');
 });
 </script>

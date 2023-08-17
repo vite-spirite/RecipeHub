@@ -1,5 +1,5 @@
 <template>
-    <div class="recipe w-full p-12">
+    <div class="recipe w-full sm:p-12 p-4">
 
         <h1 class="title w-full pb-5 border-b-2 border-orange-200">{{ recipe.name }}</h1>
 
@@ -19,18 +19,18 @@
             </div>
 
             <div class="flex flex-row space-x-2 sm:space-x-0 sm:flex-col justify-center items-center">
-                <h6>Préparation:</h6>
-                <span>{{ moment.duration(recipe.preparationTime, 'seconds').humanize() }}</span>
+                <h6>Preparation:</h6>
+                <span>{{ humanizeTime(moment.duration(recipe.preparationTime, 'seconds')) }}</span>
             </div>
 
             <div class="flex flex-row space-x-2 sm:space-x-0 sm:flex-col justify-center items-center">
                 <h6>Cooking:</h6>
-                <span>{{ moment.duration(recipe.cookingTime, 'seconds').humanize() }}</span>
+                <span>{{ humanizeTime(moment.duration(recipe.cookingTime, 'seconds')) }}</span>
             </div>
 
             <div class="flex flex-row space-x-2 sm:space-x-0 sm:flex-col justify-center items-center">
                 <h6>Growing:</h6>
-                <span>{{ moment.duration(recipe.growingTime, 'seconds').humanize() }}</span>
+                <span>{{ humanizeTime(moment.duration(recipe.growingTime, 'seconds')) }}</span>
             </div>
 
             <div class="flex flex-row space-x-2 sm:space-x-0 sm:flex-col justify-center items-center">
@@ -54,7 +54,7 @@
                 </div>
             </div>
 
-            <div class="card p-5 mb-6 sm:mb-0 w-full sm:w-auto">
+            <div class="card p-5 mb-6 sm:mb-0 w-full sm:w-1/3">
                 <div class="card-title">Ingredients</div>
 
                 <ul class="list-disc list-inside mt-5">
@@ -68,7 +68,7 @@
 <script setup lang="ts">
 import { RecipeDto } from '~/api/dto/recipe.dto';
 import { useApi } from '~/store/useApi';
-import moment from 'moment'
+import moment, { Moment } from 'moment'
 const route = useRoute();
 const {fetch} = useApi();
 
@@ -85,6 +85,11 @@ const createTitle = computed(() => {
 const totalPrepTime = computed(() => {
     return moment.duration(recipe.value.preparationTime + recipe.value.cookingTime + recipe.value.growingTime, 'seconds').humanize();
 })
+
+const humanizeTime = (dur: moment.Duration): string => {
+    const date = moment(dur.asMilliseconds());
+    return `${date.format('H:mm')}`;
+}
 
 useSeoMeta({
     title: createTitle,
