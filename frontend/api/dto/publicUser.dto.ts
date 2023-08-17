@@ -3,4 +3,5 @@ export interface PublicUserDto {
     firstName: string;
     lastName: string;
     picture: string;
+    createdAt?: Date;
 }

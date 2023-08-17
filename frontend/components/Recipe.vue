@@ -23,7 +23,7 @@
         <div class="card-footer p-4 flex flex-row justify-between items-center">
             <div class="author flex flex-row justify-start items-center space-x-1">
                 <img :src="recipe.author.picture" :alt="recipe.author.picture" class="w-5 h-5 rounded-full object-cover" />
-                <span class="text-sm">{{ recipe.author.firstName }} {{ recipe.author.lastName }}</span>
+                <NuxtLink :to="`profile/${recipe.author.id}`" class="text-sm !text-slate-900">{{ recipe.author.firstName }} {{ recipe.author.lastName }}</NuxtLink>
             </div>
 
             <NuxtLink :to="`/recipe/${recipe.slug}`" class="ghost">View recipe</NuxtLink>
