@@ -84,7 +84,21 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
                                 resource: {model: getModelByName('recipe'), client: prisma},
                                 options: {
                                     navigation: 'Recettes',
-                                    //listProperties: ['id', 'name', 'categories', 'createdAt', 'updatedAt'],
+                                    actions: {
+                                        edit: {
+                                            before: async ({payload}, {currentAdmin}) => {
+                                                const slug = slugify(`${payload.id} ${payload.name}`, {lower: true});
+                                                let pictures: string[] = [];
+
+                                                if(payload.pictures) {
+                                                    pictures = payload.pictures.split(',');
+                                                    pictures.map(p => p.trim());
+                                                }
+
+                                                return {payload: {...payload, slug, pictures}, method: 'put'};
+                                            }
+                                        }
+                                    }
                                 }
                             },
                             {
