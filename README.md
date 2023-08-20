@@ -73,5 +73,5 @@
 <h2 align="left">Preview</h2>
 
 ###
-
-<p align="left">Vous pouvez consulter une démo de l'application à l'adresse suivante : <a href="https://recipehub.netlify.app/" target="_blank">https://recipehub.netlify.app/</a></p>
+[![Netlify Status](https://api.netlify.com/api/v1/badges/f9b5606f-939a-45cb-940d-3ac5dfb4b625/deploy-status)](https://app.netlify.com/sites/mb-recipehub/deploys)
+<p align="left">Vous pouvez consulter une démo de l'application à l'adresse suivante : <a href="mb-recipehub.netlify.app" target="_blank">mb-recipehub.netlify.app</a></p>
