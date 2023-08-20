@@ -240,7 +240,7 @@ const submit = handleSubmit(async (data) => {
         }
     }
 
-    const comment = myComment();
+    const comment = myComment.value;
 
     if(comment) {
         setFieldValue('edit', true);
