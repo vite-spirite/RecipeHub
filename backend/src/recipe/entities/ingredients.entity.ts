@@ -8,8 +8,6 @@ export class Ingredient implements ingredient {
     name: string;
     @ApiProperty()
     unit: string;
-    @ApiProperty()
-    slug: string;
     @ApiProperty({nullable: true})
     picture: string|null;
     @ApiProperty({type: 'Date'})

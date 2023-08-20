@@ -7,6 +7,7 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-yet';
 import { CaslModule } from 'nest-casl';
 import { permissions } from './recipe.permissions';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
@@ -26,6 +27,13 @@ import { permissions } from './recipe.permissions';
       }),
     }),
     CaslModule.forFeature({permissions}),
+    MulterModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (config: ConfigService) => ({
+          dest: config.get<string>('MULTER_RECIPE_PICTURES_DEST'),
+      }),
+    })
   ],
   controllers: [RecipeController],
   providers: [RecipeService, PrismaService],

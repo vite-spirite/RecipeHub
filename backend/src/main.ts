@@ -3,6 +3,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import * as dotenv from 'dotenv';
 import * as session from 'express-session';
+import {json, urlencoded} from 'body-parser'
 
 const env = dotenv.config().parsed;
 
@@ -18,6 +19,9 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
+  
+  app.use(json({limit: '50mb'}));
+  app.use(urlencoded({limit: '50mb', extended: true}));
 
   app.enableCors({
     allowedHeaders: '*',

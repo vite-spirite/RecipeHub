@@ -105,4 +105,24 @@
   .divider_h {
     @apply w-full h-[2px] bg-orange-100 block;
   }
+
+  .input-control .dropzone {
+    @apply min-h-[160px] w-full flex flex-col space-y-3 justify-start items-start border-2 border-dashed border-gray-300 rounded-lg p-4 transition-all duration-500 relative;
+  }
+
+  .input-control .dropzone.hover {
+    @apply outline-none border-orange-500;
+  }
+
+  .dropzone .dropzone-content {
+    @apply flex flex-col space-y-3 justify-center items-center w-full h-full font-primary font-medium text-base text-gray-600 absolute top-0 left-0;
+  }
+
+  .dropzone .dropzone-files {
+    @apply w-full h-full grid grid-cols-3 sm:grid-cols-5 gap-4;
+  }
+
+  .dropzone .dropzone-files .dropzone-file img {
+    @apply w-full object-cover rounded-lg aspect-square;
+  }
 }

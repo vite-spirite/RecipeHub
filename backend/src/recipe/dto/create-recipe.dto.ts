@@ -18,7 +18,7 @@ export class CreateRecipeDto {
     portions: number;
     @ApiProperty()
     difficulty: number;
-    @ApiProperty()
+    @ApiProperty({type: () => [CreateRecipeIngredientDto]})
     ingredients: CreateRecipeIngredientDto[];
     @ApiProperty()
     steps: CreateRecipeStepDto[];

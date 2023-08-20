@@ -29,17 +29,13 @@ export const useApi = defineStore('api', () => {
         }) as AsyncData<T, FetchError>;
     }
 
-    const fetchAsync = async <T = any>(route: string, method: "GET"|"POST"|"PATCH"|"DELETE", includeBearer: boolean = false, body?: any): Promise<T|FetchError> => {
-        const headers: {[K: string]: string} = {
-            'Content-Type': 'application/json',
-        }
-
+    const fetchAsync = async <T = any>(route: string, method: "GET"|"POST"|"PATCH"|"DELETE", includeBearer: boolean = false, body?: any, headers: {[K: string]: string} = {'Content-Type': 'application/json'}): Promise<T|FetchError> => {
         if(includeBearer) { 
             headers['Authorization'] = "Bearer " + useUser().accessToken;
         }
 
         try {
-            const response = await $fetch<T>(apiUrl+route, {method, headers, body});
+            const response = await $fetch<T>(apiUrl+route, {method, headers: headers, body});
 
             return response;
         }
@@ -48,7 +44,7 @@ export const useApi = defineStore('api', () => {
 
             if(error.status === 401 && includeBearer) {
                 await useUser().refresh();
-                return await fetchAsync<T>(route, method, includeBearer, body);
+                return await fetchAsync<T>(route, method, includeBearer, body, headers);
             }
 
             throw error;

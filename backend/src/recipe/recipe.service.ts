@@ -9,6 +9,7 @@ import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { JwtPayload } from 'src/auth/dto/jwt-payload.dto';
 import slugify from 'slugify';
 import { Prisma } from '@prisma/client';
+import { Ingredient } from './entities/ingredients.entity';
 
 @Injectable()
 export class RecipeService {
@@ -303,5 +304,9 @@ export class RecipeService {
         
         const total = await this.prisma.recipe.count({where: {deletedAt: null, categories: {some: {id: category}}}});
         return Math.ceil(total / perPage);
+    }
+
+    async findAllIngredients(): Promise<Ingredient[]> {
+        return await this.prisma.ingredient.findMany({orderBy: {name: 'asc'}}) as unknown as Ingredient[];
     }
 }

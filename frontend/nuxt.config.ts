@@ -20,6 +20,7 @@ export default defineNuxtConfig({
     //'@nuxtjs/robots',
     'nuxt-simple-sitemap',
     'nuxt-simple-robots',
+    '@vueuse/nuxt',
   ],
   tailwindcss: {
     configPath: '~/tailwind.config.ts',

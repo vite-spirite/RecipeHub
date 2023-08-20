@@ -15,6 +15,7 @@
     "@pinia/nuxt": "^0.4.11",
     "@types/node": "^18.17.1",
     "@vee-validate/nuxt": "^4.11.1",
+    "@vueuse/nuxt": "^10.3.0",
     "nuxt": "^3.6.5",
     "nuxt-icon": "^0.4.2",
     "nuxt-simple-robots": "^3.1.0",
@@ -26,6 +27,7 @@
     "vue": "latest"
   },
   "dependencies": {
+    "@vee-validate/yup": "^4.11.1",
     "moment": "^2.29.4",
     "pinia": "^2.1.6",
     "yup": "^1.2.0"
