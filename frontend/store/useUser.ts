@@ -45,7 +45,9 @@ export const useUser = defineStore('user', () => {
         try {
             const response = await useApi().fetchAsync<string>('/auth/refresh', 'POST', false, {refreshToken: refreshToken.value});
 
-            if(response instanceof FetchError) {
+            if(response instanceof Error) {
+                setRefreshToken('');
+                isAuth.value = false;
                 return false;
             }
 
