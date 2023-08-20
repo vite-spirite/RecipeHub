@@ -24,93 +24,104 @@ enum Roles {
 }
 
 model user {
-  id Int @default(autoincrement()) @id
+  id        Int    @id @default(autoincrement())
   firstName String
-  lastName String
+  lastName  String
 
-  email String? @unique
+  email    String? @unique
   password String?
 
   picture String?
 
-  provider Provider @default(LOCAL)
+  provider   Provider @default(LOCAL)
   providerId String?
 
   roles Roles @default(CUSTOMER)
 
   recipes recipe[]
+  favorites userFavoriteRecipe[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model category {
-  id Int @default(autoincrement()) @id
-  name String
-  slug String @unique
+  id      Int     @id @default(autoincrement())
+  name    String
+  slug    String  @unique
   picture String?
 
   recipes recipe[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 }
 
 model ingredient {
-  id Int @default(autoincrement()) @id
-  name String
-  unit String
-  picture String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        Int       @id @default(autoincrement())
+  name      String
+  unit      String
+  picture   String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
   recipes recipeIngredients[]
 }
 
 model recipe {
-  id Int @default(autoincrement()) @id
-  name String
-  slug String @unique
+  id       Int      @id @default(autoincrement())
+  name     String
+  slug     String   @unique
   pictures String[]
 
   preparationTime Int
-  cookingTime Int
-  growingTime Int
-  portions Int @default(4)
-  difficulty Int @default(1)
-  ingredients recipeIngredients[]
-  steps recipeStep[]
+  cookingTime     Int
+  growingTime     Int
+  portions        Int                 @default(4)
+  difficulty      Int                 @default(1)
+  ingredients     recipeIngredients[]
+  steps           recipeStep[]
 
   authorId Int
-  author user @relation(fields: [authorId], references: [id])
+  author   user @relation(fields: [authorId], references: [id])
+  userFavs userFavoriteRecipe[]
 
   categories category[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 }
 
 model recipeIngredients {
-  id Int @default(autoincrement()) @id
-  recipeId Int
+  id           Int     @id @default(autoincrement())
+  recipeId     Int
   ingredientId Int
-  quantity Int
+  quantity     Int
   overrideUnit String?
 
-  recipe recipe @relation(fields: [recipeId], references: [id])
+  recipe     recipe     @relation(fields: [recipeId], references: [id])
   ingredient ingredient @relation(fields: [ingredientId], references: [id])
 }
 
 model recipeStep {
-  id Int @default(autoincrement()) @id
+  id Int @id @default(autoincrement())
 
-  recipeId Int
-  step Int
+  recipeId    Int
+  step        Int
   description String
-  time Int
+  time        Int
 
+  recipe recipe @relation(fields: [recipeId], references: [id])
+}
+
+model userFavoriteRecipe {
+  id       Int    @id @default(autoincrement())
+  userId   Int
+  recipeId Int
+
+  user   user   @relation(fields: [userId], references: [id])
   recipe recipe @relation(fields: [recipeId], references: [id])
 }

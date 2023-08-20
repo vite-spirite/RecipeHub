@@ -10,6 +10,7 @@ import { JwtPayload } from 'src/auth/dto/jwt-payload.dto';
 import slugify from 'slugify';
 import { Prisma } from '@prisma/client';
 import { Ingredient } from './entities/ingredients.entity';
+import { connect } from 'http2';
 
 @Injectable()
 export class RecipeService {
@@ -308,5 +309,44 @@ export class RecipeService {
 
     async findAllIngredients(): Promise<Ingredient[]> {
         return await this.prisma.ingredient.findMany({orderBy: {name: 'asc'}}) as unknown as Ingredient[];
+    }
+
+    async getFavoriteRecipes(user: JwtPayload): Promise<RecipeCompactDto[]> {
+        const recipes = await this.prisma.user.findFirst({
+            where: {id: user.id},
+            include: {
+                favorites: {
+                    include: {
+                        recipe: {
+                            include: {
+                                author: {select: {id: true, firstName: true, lastName: true, picture: true, createdAt: true, updatedAt: true}},
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        return recipes.favorites.map(favorite => {
+            return favorite.recipe;
+        }) as RecipeCompactDto[];
+    }
+
+    async addFavoriteRecipe(id: number, user: JwtPayload): Promise<void> {
+        console.log(user);
+        const exist = await this.prisma.userFavoriteRecipe.findFirst({where: {userId: user.id, recipeId: id}});
+        console.log(exist);
+
+        if(!exist) {
+            await this.prisma.userFavoriteRecipe.create({
+                data: {
+                    userId: user.id,
+                    recipeId: id,
+                }
+            })
+        }
+        else {
+            await this.prisma.userFavoriteRecipe.delete({where: {id: exist.id}});
+        }
     }
 }

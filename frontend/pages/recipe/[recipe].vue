@@ -1,7 +1,14 @@
 <template>
     <div class="recipe w-full sm:p-12 p-4">
 
-        <h1 class="title w-full pb-5 border-b-2 border-orange-200">{{ recipe.name }}</h1>
+        <div class="w-full pb-5 border-b-2 border-orange-200 flex flex-row justify-between items-center">
+            <h1 class="title w-full">{{ recipe.name }}</h1>
+
+            <div class="favorite-button" v-if="isAuth">
+                <Icon name="fa6-solid:heart" class="h-8 w-8 text-red-500 cursor-pointer" v-if="favoriteRecipes.map(f => f.slug).includes(recipe.slug)" @click.prevent="toggleFavoriteRecipe(recipe)"/>
+                <Icon name="fa6-solid:heart" class="h-8 w-8 text-red-100 cursor-pointer" v-else @click.prevent="toggleFavoriteRecipe(recipe)"/>
+            </div>
+        </div>
 
         <div class="galery flex flex-row justify-between items-center mt-6">
             <Swiper class="w-full" :grab-cursor="true" :effect="'creative'" :modules="[SwiperEffectCreative]" :creativeEffect="{prev: {shadow: true,translate: [0, 0, -400],},next: {translate: ['100%', 0, 0],},}">
@@ -82,9 +89,19 @@
 <script setup lang="ts">
 import { RecipeDto } from '~/api/dto/recipe.dto';
 import { useApi } from '~/store/useApi';
+import { useUser } from '~/store/useUser';
 import moment, { Moment } from 'moment'
+import { storeToRefs } from 'pinia';
 const route = useRoute();
 const {fetch} = useApi();
+
+const user = useUser();
+const {isAuth, favoriteRecipes} = storeToRefs(user);
+const {toggleFavoriteRecipe} = user;
+
+if(isAuth && favoriteRecipes.value.length === 0) {
+    await user.loadFavoriteRecipes();
+}
 
 const {data: recipe} = await fetch<RecipeDto>(`/recipe/slug/${route.params.recipe}`, 'GET');
 

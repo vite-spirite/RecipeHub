@@ -9,7 +9,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { User } from 'src/auth/decorators/user.decorators';
 import { AccessGuard, Actions, UseAbility } from 'nest-casl';
 import { RecipeHook } from './recipe.hook';
-import { RecipeCompactWithoutAuthor } from './dto/recipe-compact.dto';
+import { RecipeCompactDto, RecipeCompactWithoutAuthor } from './dto/recipe-compact.dto';
 import { Ingredient } from './entities/ingredients.entity';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -33,10 +33,25 @@ export class RecipeController {
     return this.recipeService.getCompleteRecipeBySlug(slug);
   }
 
-  @ApiOkResponse({ type: RecipeCompactWithoutAuthor })
+  @ApiOkResponse({ type: [RecipeCompactWithoutAuthor] })
   @Get('/user/:id')
   async getUserRecipe(@Param('id') id: number) {
     return this.recipeService.getRecipeByUser(+id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiOkResponse({ type: [RecipeCompactDto] })
+  @ApiBearerAuth()
+  @Get('favorites')
+  async getFavoriteRecipes(@User() user: JwtPayload) {
+    return this.recipeService.getFavoriteRecipes(user);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @Post('favorites/:id')
+  async addFavoriteRecipe(@Param('id') id: number, @User() user: JwtPayload) {
+    return this.recipeService.addFavoriteRecipe(+id, user);
   }
 
   @ApiOkResponse({ type: RecipePaginateDto })

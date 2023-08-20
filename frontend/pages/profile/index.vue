@@ -36,6 +36,15 @@
             <NuxtLink to="/recipe/create" class="block bg-orange-100 w-full text-center font-bold font-primary text-white py-3 mt-5 hover:bg-orange-300 transition-all duration-200 rounded-md">+ Create new recipe</NuxtLink>
         </div>
 
+        <div v-if="favoriteRecipes && favoriteRecipes.length > 0" class="w-full">
+            <h2 class="title w-full pt-16 pb-5 px-5">My favorite recipes</h2>
+            <div class="divider_h"></div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 mt-5 px-5" v-if="meRecipes.length > 0">
+                <Recipe class:="w-full" v-for="recipe in favoriteRecipes" :key="recipe.slug" :recipe="recipe" />
+            </div>
+        </div>
+
         <h2 class="title w-full pt-16 pb-5 px-5">Settings</h2>
         <div class="divider_h"></div>
 
@@ -83,7 +92,7 @@ definePageMeta({
 });
 
 const user = useUser();
-const {me: currentUser, meRecipes} = storeToRefs(user);
+const {me: currentUser, meRecipes, favoriteRecipes} = storeToRefs(user);
 const {update} = user;
 
 if (!currentUser.value) {
@@ -92,6 +101,10 @@ if (!currentUser.value) {
 
 if(meRecipes.value.length === 0) {
     await user.loadMeRecipes();
+}
+
+if(favoriteRecipes.value.length === 0) {
+    await user.loadFavoriteRecipes();
 }
 
 const {defineInputBinds, values: updateValues, errors: updateErrors, setErrors: setUpdateErrors, meta, isSubmitting, handleSubmit} = useForm<{email?: string, currentPassword?: string, password?: string, confirm_password?: string}>({

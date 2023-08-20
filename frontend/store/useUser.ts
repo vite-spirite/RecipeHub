@@ -13,6 +13,7 @@ export const useUser = defineStore('user', () => {
     const me: Ref<UserDto|null> = ref(null);
 
     const meRecipes: Ref<Omit<CompactRecipeDto[], 'author'>> = ref([])
+    const favoriteRecipes: Ref<CompactRecipeDto[]> = ref([]);
 
     const refreshToken = useCookie<string>(refreshTokenName, {expires: new Date(new Date().setMonth(new Date().getMonth() + 1)), default: () => ''});
 
@@ -164,6 +165,20 @@ export const useUser = defineStore('user', () => {
         return response;
     }
 
+    const loadFavoriteRecipes = async () => {
+        const response = await useApi().fetch(`/recipe/favorites`, 'GET', true);
+        favoriteRecipes.value = response.data.value || [];
+        return response;
+    }
+
+    const toggleFavoriteRecipe = async (recipe: CompactRecipeDto) => {
+        const response = await useApi().fetch(`/recipe/favorites/${recipe.id}`, 'POST', true);
+        await loadFavoriteRecipes();
+        return response;
+    }
+
+    loadFavoriteRecipes();
+
     return {
         setRefreshToken, 
         setAccessToken, 
@@ -178,6 +193,9 @@ export const useUser = defineStore('user', () => {
         refresh,
         meRecipes,
         loadMeRecipes,
-        update
+        update,
+        favoriteRecipes,
+        loadFavoriteRecipes,
+        toggleFavoriteRecipe
     }
 })
