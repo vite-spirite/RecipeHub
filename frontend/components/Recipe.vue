@@ -13,9 +13,9 @@
                     <span>{{ cookingTime }}</span>
                 </div>
 
-                <div class="difficulty rounded-md p-1">
-                    <span v-for="i in recipe.difficulty" :key="i" class="text-orange-400 text-xl">★</span>
-                    <span v-for="i in 6 - recipe.difficulty" :key="i" class="text-gray-400 text-xl">★</span>
+                <div class="difficulty rounded-md p-1 flex flex-row gap-1">
+                    <Icon name="fa6-solid:cookie" class="h-5 w-5 text-orange-500" v-for="i in recipe.difficulty"/>
+                    <Icon name="fa6-solid:cookie-bite" class="h-5 w-5 text-slate-500" v-for="i in 6 - recipe.difficulty"/>
                 </div>
             </div>
         </div>

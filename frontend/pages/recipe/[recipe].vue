@@ -35,9 +35,9 @@
 
             <div class="flex flex-row space-x-2 sm:space-x-0 sm:flex-col justify-center items-center">
                 <h6>Difficulty</h6>
-                <div class="flex flex-row justify-center items-center">
-                    <Icon name="fa6-solid:star" class="h-5 w-5 text-orange-500" v-for="i in recipe.difficulty"/>
-                    <Icon name="fa6-solid:star" class="h-5 w-5 text-slate-500" v-for="i in 6 - recipe.difficulty"/>
+                <div class="flex flex-row justify-center items-center gap-1">
+                    <Icon name="fa6-solid:cookie" class="h-5 w-5 text-orange-500" v-for="i in recipe.difficulty"/>
+                    <Icon name="fa6-solid:cookie-bite" class="h-5 w-5 text-slate-500" v-for="i in 6 - recipe.difficulty"/>
                 </div>
             </div>
         </div>
@@ -105,6 +105,8 @@ const humanizeTime = (dur: moment.Duration): string => {
     return `${date.format('H:mm')}`;
 }
 
+const config = useRuntimeConfig();
+
 useSeoMeta({
     title: createTitle,
     ogTitle: createTitle,
@@ -116,5 +118,6 @@ useSeoMeta({
     description: createDescription,
     ogDescription: createDescription,
     twitterDescription: createDescription,
+    ogImageUrl: () => recipe.value.pictures[0],
 })
 </script>
