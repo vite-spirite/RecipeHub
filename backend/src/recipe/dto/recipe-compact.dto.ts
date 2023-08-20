@@ -2,7 +2,7 @@ import { PublicUserDto } from 'src/users/dto/public-user.dto';
 import { Recipe } from '../entities/recipe.entity';
 import { ApiProperty, OmitType } from '@nestjs/swagger';
 
-export class RecipeCompactDto implements Omit<Recipe, 'ingredients'|'steps'|'categories'> {
+export class RecipeCompactDto implements Omit<Recipe, 'ingredients'|'steps'|'categories'|'comments'> {
     @ApiProperty()
     id: number;
     @ApiProperty()
@@ -31,6 +31,8 @@ export class RecipeCompactDto implements Omit<Recipe, 'ingredients'|'steps'|'cat
     deletedAt: Date;
     @ApiProperty({type: PublicUserDto})
     author: PublicUserDto;
+    @ApiProperty({type: 'number'})
+    rating: number;
 
 }
 

@@ -47,6 +47,15 @@
                     <Icon name="fa6-solid:cookie-bite" class="h-5 w-5 text-slate-500" v-for="i in 6 - recipe.difficulty"/>
                 </div>
             </div>
+
+            <div class="flex flex-row space-x-2 sm:space-x-0 sm:flex-col justify-center items-center">
+                <h6>Rating</h6>
+                <div v-if="recipe.rating > -1" class="flex flex-row justify-center items-center gap-1">
+                    <Icon name="fa6-solid:star" class="h-5 w-5 text-orange-500" v-for="i in roundRating(recipe.rating)"/>
+                    <Icon name="fa6-solid:star" class="h-5 w-5 text-slate-500" v-for="i in 6 - roundRating(recipe.rating)"/>
+                </div>
+                <span v-else>No rating</span>
+            </div>
         </div>
 
         <div class="flex flex-col-reverse sm:flex-row mt-6 items-start justify-between sm:space-x-3">
@@ -60,7 +69,7 @@
                     </div>
                 </div>
             </div>
-            <div class="flex flex-col space-y-6 w-full sm:w-1/3">
+            <div class="flex flex-col space-y-3 w-full sm:w-1/3">
                 <div class="card p-5 w-full">
                     <div class="card-title">Ingredients</div>
 
@@ -78,8 +87,57 @@
                     </div>
 
                     <div class="card-footer w-full flex flex-row justify-end items-center">
-                        <a :href="`/profile/${recipe.author.id}`" class="btn btn-primary ghost">View profile</a>
+                        <NuxtLink :to="`/profile/${recipe.author.id}`" class="btn btn-primary ghost">View profile</NuxtLink>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card w-full mt-6" v-if="isAuth">
+            <div class="card-title">Comments</div>
+
+            <div class="card-content">
+                <form action="#" class="flex flex-col justify-start items-start space-y-3">
+                    <div class="input-control w-full">
+                        <label for="rate">Rate</label>
+                        <input id="rate" name="rate" type="hidden" class="input" placeholder="Rate" v-bind="rateField"/>
+
+                        <div class="flex flex-row justify-start items-center gap-2">
+                            <Icon name="fa6-solid:star" class="h-5 w-5 text-orange-500 cursor-pointer" v-for="i in values.rating" @click.prevent="setFieldValue('rating',i)" :key="`form-rate-${i}`"/>
+                            <Icon name="fa6-solid:star" class="h-5 w-5 text-slate-500 cursor-pointer" v-for="i in 6 - roundRating(values.rating)" @click.prevent="setFieldValue('rating',i+roundRating(values.rating))" :key="`form-rate-${i+roundRating(values.rating)}`"/>
+                        </div>
+                    </div>
+
+                    <div class="input-control w-full">
+                        <label for="comment">Comment</label>
+                        <textarea id="comment" name="comment" class="input" :error="(typeof errors.comment === 'string')" rows="5" placeholder="Comment" v-bind="commentField"></textarea>
+                        <span class="error-text-alt">{{ errors.comment }}</span>
+                    </div>
+                </form>
+
+                <div class="card-footer w-full flex flex-row justify-end items-center mt-3">
+                    <button class="btn btn-primary" :disabled="!meta.valid || isSubmitting" @click="submit">{{ values.edit ? 'Edit' : 'Comment' }}</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-col justify-start items-center gap-2 mt-6">
+            <div class="card w-full" v-if="recipe.comments" v-for="comment in recipe.comments">
+                <div class="card-title flex flex-row justify-between">
+                    <div class="flex flex-row justify-start items-center space-x-3"><img class="rounded-full h-10" :src="comment.user.picture" :alt="comment.user.firstName"/> <h6 class="text-md">{{ comment.user.firstName }} {{ comment.user.lastName }}</h6></div>
+                    
+                    <div class="flex flex-row justify-center items-center gap-1">
+                        <Icon name="fa6-solid:star" class="h-5 w-5 text-orange-500" v-for="i in roundRating(comment.rating)" :key="`comment-rate-${comment.id}-${i}`"/>
+                        <Icon name="fa6-solid:star" class="h-5 w-5 text-slate-500" v-for="i in 6 - roundRating(comment.rating)" :key="`comment-rate-${comment.id}-${roundRating(comment.rating)+i}`"/>
+                    </div>
+                </div>
+
+                <div class="card-content">
+                    <p class="font-secondary font-italic" v-text="comment.comment"></p>
+                </div>
+
+                <div class="card-footer">
+                    <p class="font-secondary font-italic text-right" v-text="moment(comment.createdAt).utc(false).fromNow()"></p>
                 </div>
             </div>
         </div>
@@ -90,13 +148,15 @@
 import { RecipeDto } from '~/api/dto/recipe.dto';
 import { useApi } from '~/store/useApi';
 import { useUser } from '~/store/useUser';
-import moment, { Moment } from 'moment'
+import moment from 'moment'
 import { storeToRefs } from 'pinia';
+import * as yup from 'yup';
+
 const route = useRoute();
 const {fetch} = useApi();
 
 const user = useUser();
-const {isAuth, favoriteRecipes} = storeToRefs(user);
+const {isAuth, favoriteRecipes, me} = storeToRefs(user);
 const {toggleFavoriteRecipe} = user;
 
 if(isAuth && favoriteRecipes.value.length === 0) {
@@ -136,5 +196,60 @@ useSeoMeta({
     ogDescription: createDescription,
     twitterDescription: createDescription,
     ogImageUrl: () => recipe.value.pictures[0],
+})
+
+const roundRating = (rating: number): number => {
+    return Math.round(rating);
+}
+
+const myComment = computed(() => {
+    return recipe.value.comments.find(c => c.user.id === me.value?.id);
+})
+
+const {values, setFieldValue, defineInputBinds, errors, handleSubmit, meta, isSubmitting, handleReset} = useForm<{comment: string, rating: number, edit: boolean}>({
+    initialValues: {
+        comment: myComment.value ? myComment.value.comment : '',
+        rating: myComment.value ? myComment.value.rating : 0,
+        edit: myComment.value ? true : false,
+    },
+    validationSchema: yup.object({
+        comment: yup.string().required().min(10).max(160),
+        rating: yup.number().min(0).max(6).required(),
+        edit: yup.boolean().default(false).required()
+    },),
+});
+
+const commentField = defineInputBinds('comment');
+const rateField = defineInputBinds('rating');
+
+const submit = handleSubmit(async (data) => {
+    const {fetchAsync} = useApi();
+
+    if(!data.edit) {
+        const response = await fetchAsync(`/recipe/comment/${recipe.value.id}`, 'POST', true, data);
+        if(response) {
+            recipe.value.comments.push({...response, user: me.value});
+        }
+    }
+    else {
+        const response = await fetchAsync(`/recipe/comment/${myComment.value?.id}`, 'PATCH', true, data);
+        if(response) {
+            if(recipe.value.comments.find(c => c.id === myComment.value?.id) && myComment) {
+                recipe.value.comments[recipe.value.comments.findIndex(c => c.id === myComment.value?.id)] = {...response, user: me.value};
+            }
+        }
+    }
+
+    const comment = myComment();
+
+    if(comment) {
+        setFieldValue('edit', true);
+        setFieldValue('comment', comment.comment);
+        setFieldValue('rating', comment.rating);
+    }
+    else {
+        handleReset();
+    }
+
 })
 </script>

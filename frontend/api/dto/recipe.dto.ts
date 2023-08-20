@@ -2,6 +2,7 @@ import { PublicUserDto } from "./publicUser.dto";
 import {  RecipeIngredientDto} from './recipeIngredient.dto';
 import { CategoryDto } from "./category.dto";
 import { StepDto } from "./step.dto";
+import {CommentDto} from './comment.dto';
 
 export interface RecipeDto {
     id: number;
@@ -17,6 +18,8 @@ export interface RecipeDto {
     categories: CategoryDto[];
     ingredients: RecipeIngredientDto[];
     steps: StepDto[];
+    comments: CommentDto[];
+    rating: number;
     createdAt: Date;
     updatedAt: Date;
 }

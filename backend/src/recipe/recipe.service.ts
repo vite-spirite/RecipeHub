@@ -11,6 +11,9 @@ import slugify from 'slugify';
 import { Prisma } from '@prisma/client';
 import { Ingredient } from './entities/ingredients.entity';
 import { connect } from 'http2';
+import { CreateCommentDto } from './dto/create-comment.dto';
+import { UpdateCommentDto } from './dto/update-comment.dto';
+import { Comment } from './entities/comment.entity';
 
 @Injectable()
 export class RecipeService {
@@ -98,40 +101,48 @@ export class RecipeService {
                     }
                 },
                 steps: true,
-                author: {select: {id: true, firstName: true, lastName: true, picture: true, createdAt: true, updatedAt: true}}
+                author: {select: {id: true, firstName: true, lastName: true, picture: true, createdAt: true, updatedAt: true}},
+                comments: {include: {user: {select: {id: true, firstName: true, lastName: true, picture: true, createdAt: true, updatedAt: true}}}, orderBy: {createdAt: 'desc'}},
+                categories: true,
             }
-        })) as unknown as Recipe;
+        }));
 
-        await this.cache.set<Recipe>(`recipe:${id}`, recipe, parseInt(this.config.get('REDIS_CACHE_RECIPE_TTL')));
-        return recipe;
+        const rating = recipe.comments.length > 0 ? recipe.comments.reduce((acc, {rating}) => acc + rating, 0)/recipe.comments.length : -1;
+
+        const data : Recipe = {
+            ...recipe,
+            rating,
+        } as unknown as Recipe;
+
+        await this.cache.set<Recipe>(`recipe:${id}`, data, parseInt(this.config.get('REDIS_CACHE_RECIPE_TTL')));
+        return data;
     }
 
     async getCompleteRecipeBySlug(slug: string): Promise<Recipe> {
-        const caching = await this.cache.get<Recipe>(`recipe:${slug}`);
+        const id = await this.prisma.recipe.findFirst({where: {slug}, select: {id: true}});
+        const caching = await this.cache.get<Recipe>(`recipe:${id}`);
 
-        if(caching) {
-            return caching;
-        }
-
-        const recipe = (await this.prisma.recipe.findUnique({
-            where: {slug},
-            include: {
-                ingredients: {
-                    include: {
-                        ingredient: true
-                    }
-                },
-                steps: true,
-                author: {select: {id: true, firstName: true, lastName: true, picture: true, createdAt: true, updatedAt: true}}
-            }
-        })) as unknown as Recipe;
-
-        await this.cache.set<Recipe>(`recipe:${slug}`, recipe, parseInt(this.config.get('REDIS_CACHE_RECIPE_TTL')));
+        const recipe = caching ? caching : await this.getCompleteRecipe(id.id);
         return recipe;
     }
 
     async getRecipeByUser(id: number): Promise<RecipeCompactWithoutAuthor[]> {
-        return await this.prisma.recipe.findMany({where: {authorId: id, deletedAt: null}});
+        const recipes = await this.prisma.recipe.findMany({where: {authorId: id, deletedAt: null}, include: {comments: {select: {rating: true}}}});
+
+        return recipes.map<RecipeCompactWithoutAuthor>(recipe => {
+            const comments = recipe.comments.map(comment => comment.rating);
+            delete recipe.comments;
+
+            const rating = comments.length > 0 ? comments.reduce((acc, comment) => {
+                return acc + comment;
+            })/comments.length : -1;
+
+            return {
+                ...recipe,
+                rating
+            }
+        })
+
     }
 
     async getRecipesByCategory(category: number, page: number): Promise<RecipePaginateDto> {
@@ -348,5 +359,44 @@ export class RecipeService {
         else {
             await this.prisma.userFavoriteRecipe.delete({where: {id: exist.id}});
         }
+    }
+
+    async findComment(id: number): Promise<Comment> {
+        return await this.prisma.comments.findUnique({where: {id}}) as unknown as Comment;
+    }
+
+    async addComment(id: number, comment: CreateCommentDto, user: JwtPayload): Promise<Comment> {
+        const _comment = await this.prisma.comments.create({
+            data: {
+                comment: comment.comment,
+                rating: comment.rating,
+                recipeId: id,
+                userId: user.id,
+            }
+        });
+
+        await this.cache.del(`recipe:${id}`);
+
+        return _comment as unknown as Comment;
+    }
+
+    async updateComment(id: number, comment: UpdateCommentDto): Promise<Comment> {
+        const _comment = await this.prisma.comments.update({
+            data: {
+                comment: comment.comment,
+                rating: comment.rating,
+            },
+            where: {id}
+        });
+
+        await this.cache.del(`recipe:${_comment.recipeId}`);
+        
+        return _comment as unknown as Comment;
+    }
+
+    async deleteComment(id: number): Promise<void> {
+        const comment = await this.prisma.comments.findUnique({where: {id}});
+        await this.prisma.comments.delete({where: {id}});
+        await this.cache.del(`recipe:${comment.recipeId}`);
     }
 }

@@ -40,6 +40,7 @@ model user {
 
   recipes recipe[]
   favorites userFavoriteRecipe[]
+  comments comments[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -90,6 +91,8 @@ model recipe {
 
   categories category[]
 
+  comments comments[]
+
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
@@ -124,4 +127,17 @@ model userFavoriteRecipe {
 
   user   user   @relation(fields: [userId], references: [id])
   recipe recipe @relation(fields: [recipeId], references: [id])
+}
+
+model comments {
+  id       Int     @id @default(autoincrement())
+  userId   Int
+  recipeId Int
+  comment  String
+  rating  Int
+
+  recipe recipe @relation(fields: [recipeId], references: [id])
+  user   user   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime  @default(now())
 }

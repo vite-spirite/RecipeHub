@@ -15,6 +15,10 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
+import { CreateCommentDto } from './dto/create-comment.dto';
+import { CommentHook } from './comment.hook';
+import { UpdateCommentDto } from './dto/update-comment.dto';
+import { Comment } from './entities/comment.entity';
 
 @ApiTags('recipe')
 @Controller('recipe')
@@ -113,5 +117,34 @@ export class RecipeController {
   @Get('assets/:path')
   async serveAssets(@Param('path') path: string, @Res() response: Response) {
     return response.sendFile(path, { root: this.configService.get<string>('MULTER_RECIPE_PICTURES_DEST') });
+  }
+
+  @UseGuards(JwtAuthGuard, AccessGuard)
+  @UseAbility(Actions.create, Comment, CommentHook)
+  @Post('/comment/:id')
+  @ApiBearerAuth()
+  @ApiOkResponse({ type: Comment })
+  @ApiBody({ type: CreateCommentDto })
+  async addComment(@Param('id') id: number, @Body() comment: CreateCommentDto, @User() user: JwtPayload) {
+    return this.recipeService.addComment(+id, comment, user);
+  }
+
+  @UseGuards(JwtAuthGuard, AccessGuard)
+  @UseAbility(Actions.delete, Comment, CommentHook)
+  @Delete('/comment/:id')
+  @ApiBearerAuth()
+  @ApiOkResponse({ type: Comment })
+  async deleteComment(@Param('id') id: number, @User() user: JwtPayload) {
+    return this.recipeService.deleteComment(+id);
+  }
+
+  @UseGuards(JwtAuthGuard, AccessGuard)
+  @UseAbility(Actions.update, Comment, CommentHook)
+  @Patch('/comment/:id')
+  @ApiBearerAuth()
+  @ApiOkResponse({ type: Comment })
+  @ApiBody({ type: Comment })
+  async updateComment(@Param('id') id: number, @Body() comment: UpdateCommentDto, @User() user: JwtPayload) {
+    return this.recipeService.updateComment(+id, comment);
   }
 }

@@ -1,6 +1,6 @@
 import { recipe } from "@prisma/client";
 import { ApiProperty } from "@nestjs/swagger";
-import { User } from "src/users/entities/user.entity";
+import { Comment } from "./comment.entity";
 import { RecipeIngrendient } from "./recipe-ingredient.entity";
 import { RecipeStep } from "./recipe-step.entity";
 import { PublicUserDto } from "src/users/dto/public-user.dto";
@@ -45,6 +45,12 @@ export class Recipe implements recipe {
 
     @ApiProperty({type: RecipeStep, isArray: true, nullable: true})
     steps: RecipeStep[]|null;
+
+    @ApiProperty({type: [Comment], isArray: true})
+    comments: Comment[];
+
+    @ApiProperty({type: 'number'})
+    rating: number;
 
     constructor(recipe: recipe) {
         Object.assign(this, recipe);
