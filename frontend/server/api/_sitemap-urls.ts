@@ -3,6 +3,7 @@ import { CompactRecipeDto } from "../../api/dto/compactRecipe.dto";
 import { PublicUserDto } from "../../api/dto/publicUser.dto";
 import { RecipeDto } from "../../api/dto/recipe.dto";
 
+
 export default defineEventHandler(async () => {
     const cresponse = await fetch(`${useRuntimeConfig().public.apiUrl}/category`);
     const categories = await cresponse.json();
