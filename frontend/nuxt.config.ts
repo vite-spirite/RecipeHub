@@ -35,6 +35,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       website: process.env.WEBSITE_URL || 'http://localhost:3001/',
+      generateApi: process.env.API_TO_GENERATE_STATIC || 'http://localhost:3000',
       apiUrl: 'http://localhost:3000',
       cookie: {
         refresh: 'token.refresh',
