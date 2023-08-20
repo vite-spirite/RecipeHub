@@ -177,6 +177,19 @@ const createTitle = computed(() => {
     return `${recipe.value.name} - RecipeHub`;
 })
 
+const resolveImagePath = computed(() => {
+    if(config.public.deploymentMode == 'static') {
+        return (path: string) => {
+            return path.startsWith('http') ? path : `${config.public.website}img/recipes/${path.split('/').pop()}`;
+        }
+    }
+    else {
+        return (path: string) => {
+            return path.startsWith('http') ? path : `${config.public.apiUrl}/recipe/assets/${path.split('/').pop()}`;
+        }
+    }
+})
+
 const totalPrepTime = computed(() => {
     return moment.duration(recipe.value.preparationTime + recipe.value.cookingTime + recipe.value.growingTime, 'seconds').humanize();
 })
@@ -191,15 +204,15 @@ const config = useRuntimeConfig();
 useSeoMeta({
     title: createTitle,
     ogTitle: createTitle,
-    ogImage: () => recipe.value.pictures[0],
-    ogUrl: () => `https://recipehub.com/recipe/${recipe.value.slug}`,
+    ogImage: () => resolveImagePath.value(recipe.value.pictures[0]),
+    ogUrl: () => `${config.public.website}recipe/${recipe.value.slug}`,
     twitterCard: 'summary_large_image',
     twitterTitle: createTitle,
-    twitterImage: () => recipe.value.pictures[0],
+    twitterImage: () => resolveImagePath.value(recipe.value.pictures[0]),
     description: createDescription,
     ogDescription: createDescription,
     twitterDescription: createDescription,
-    ogImageUrl: () => recipe.value.pictures[0],
+    ogImageUrl: () => resolveImagePath.value(recipe.value.pictures[0]),
 })
 
 const roundRating = (rating: number): number => {
