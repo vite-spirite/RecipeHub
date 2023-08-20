@@ -165,6 +165,10 @@ if(isAuth && favoriteRecipes.value.length === 0) {
 
 const {data: recipe} = await fetch<RecipeDto>(`/recipe/slug/${route.params.recipe}`, 'GET');
 
+if(useRuntimeConfig().public.deploymentMode == 'static') {
+    recipe.value.pictures = recipe.value.pictures.map(p => p.startsWith(useRuntimeConfig().public.apiUrl) ? `/img/recipes/${p.split('/').pop()}` : p);
+}
+
 const createDescription = computed(() => {
     return recipe.value.steps.map(s => s.description).join(' ').substr(0, 160) + '...';
 })

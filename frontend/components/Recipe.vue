@@ -39,6 +39,10 @@ const {recipe} = defineProps<{
     recipe: CompactRecipeDto;
 }>();
 
+if(useRuntimeConfig().public.deploymentMode == 'static') {
+    recipe.pictures = recipe.pictures.map(p => p.startsWith(useRuntimeConfig().public.apiUrl) ? `/img/recipes/${p.split('/').pop()}` : p);
+}
+
 const cookingTime = computed(() => {
     const duration = moment.duration(recipe.preparationTime + recipe.cookingTime + recipe.growingTime, 'seconds');
     return moment(duration.asMilliseconds()).utc(false).format('HH:mm');

@@ -39,6 +39,7 @@ export default defineNuxtConfig({
       cookie: {
         refresh: 'token.refresh',
       },
+      deploymentMode: process.env.DEPLOYMENT_MODE || 'dynamic'
     }
   },
   robots: {
