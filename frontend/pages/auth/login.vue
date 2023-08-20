@@ -1,6 +1,6 @@
 <template>
     <div class="login h-full w-full pt-12">
-        <div class="w-1/2 card m-auto">
+        <div class="w-5/6 mb-6 sm:w-1/2 card m-auto">
 
             <div class="card-title">Login:</div>
 

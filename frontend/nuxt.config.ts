@@ -1,6 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  devtools: { enabled: true },
+  devtools: { enabled: false },
   components: [
     {path: '~/components', extensions: ['vue']},
   ],
@@ -46,4 +46,10 @@ export default defineNuxtConfig({
     allow: ['*'],
     sitemap: (process.env.WEBSITE_URL || 'http://localhost:3001/') + 'sitemap.xml'
   },
+  nitro: {
+    prerender: {
+      routes: ['/profile/[id]'],
+      ignore: ['/profile', '/recipe/create']
+    }
+  }
 })

@@ -11,7 +11,7 @@
             <button class="bg-orange-300 rounded-full md:min-h-[24px] p-1 flex justify-center items-center"><Icon name="ci:search" class="h-full w-full"/></button>
         </div> -->
 
-        <div v-if="!isAuth" class="hidden sm:flex user flex-row justify-between space-x-2 text-xl">
+        <div v-if="!isAuth" class="flex user flex-row justify-between space-x-2 text-xl">
             <NuxtLink to="/auth/login">Login</NuxtLink>
             <NuxtLink to="/auth/register">Signup</NuxtLink>
         </div>

@@ -123,10 +123,10 @@
 
         <div class="flex flex-col justify-start items-center gap-2 mt-6">
             <div class="card w-full" v-if="recipe.comments" v-for="comment in recipe.comments">
-                <div class="card-title flex flex-row justify-between">
+                <div class="card-title flex flex-col sm:flex-row sm:justify-between justify-start items-start sm:items-center">
                     <div class="flex flex-row justify-start items-center space-x-3"><img class="rounded-full h-10" :src="comment.user.picture" :alt="comment.user.firstName"/> <h6 class="text-md">{{ comment.user.firstName }} {{ comment.user.lastName }}</h6></div>
                     
-                    <div class="flex flex-row justify-center items-center gap-1">
+                    <div class="flex flex-row justify-end sm:justify-center items-center gap-1 w-full sm:w-auto">
                         <Icon name="fa6-solid:star" class="h-5 w-5 text-orange-500" v-for="i in roundRating(comment.rating)" :key="`comment-rate-${comment.id}-${i}`"/>
                         <Icon name="fa6-solid:star" class="h-5 w-5 text-slate-500" v-for="i in 6 - roundRating(comment.rating)" :key="`comment-rate-${comment.id}-${roundRating(comment.rating)+i}`"/>
                     </div>

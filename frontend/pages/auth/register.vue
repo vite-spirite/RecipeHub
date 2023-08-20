@@ -1,5 +1,5 @@
 <template>
-    <div class="w-1/2 card m-auto mt-12">
+    <div class="w-5/6 sm:w-1/2 card m-auto mt-12 mb-6">
         <div class="card-title">SignUp</div>
 
         <div class="card-content">
