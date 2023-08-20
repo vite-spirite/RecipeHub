@@ -15,7 +15,7 @@
             <NuxtLink to="/auth/login">Login</NuxtLink>
             <NuxtLink to="/auth/register">Signup</NuxtLink>
         </div>
-        <div v-else class="hidden sm:flex user flex-row justify-between space-x-2 text-xl">
+        <div v-else class="flex user flex-row justify-between space-x-2 text-xl">
             <NuxtLink to="/profile">Profile</NuxtLink>
             <NuxtLink to="#" @click="logout()">Logout</NuxtLink>
         </div>

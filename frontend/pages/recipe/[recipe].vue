@@ -44,7 +44,7 @@
 
         <div class="flex flex-col-reverse sm:flex-row mt-6 items-start justify-between sm:space-x-3">
 
-            <div class="flex flex-col justify-start items-start flex-1 space-y-3">
+            <div class="flex flex-col justify-start items-start flex-1 space-y-3 mt-6 sm:mt-0">
                 <div class="card w-full" v-for="step in recipe.steps">
                     <div class="card-title">Step {{ step.step }}</div>
 
@@ -53,8 +53,8 @@
                     </div>
                 </div>
             </div>
-            <div class="flex flex-col space-y-5 w-full sm:w-1/3">
-                <div class="card p-5 mb-6 sm:mb-0 w-full">
+            <div class="flex flex-col space-y-6 w-full sm:w-1/3">
+                <div class="card p-5 w-full">
                     <div class="card-title">Ingredients</div>
 
                     <ul class="list-disc list-inside mt-5">
@@ -62,12 +62,12 @@
                     </ul>
                 </div>
 
-                <div class="card p-5 mb-6 sm:mb-0 w-full">
+                <div class="card p-5 w-full">
                     <div class="card-title">Author</div>
 
-                    <div class="card-content flex flex-row gap-5">
+                    <div class="card-content flex flex-row gap-5 items-center">
                         <img :src="recipe.author.picture" :alt="recipe.author.firstName" class="w-20 h-20 rounded-full object-cover" />
-                        <h5 class="title">{{ recipe.author.firstName }} {{ recipe.author.lastName }}</h5>
+                        <h5 class="title font-md sm:font-xl font-bold">{{ recipe.author.firstName }} {{ recipe.author.lastName }}</h5>
                     </div>
 
                     <div class="card-footer w-full flex flex-row justify-end items-center">
