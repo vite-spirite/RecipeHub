@@ -40,7 +40,7 @@ const {recipe} = defineProps<{
 }>();
 
 if(useRuntimeConfig().public.deploymentMode == 'static') {
-    recipe.pictures = recipe.pictures.map(p => p.startsWith(useRuntimeConfig().public.apiUrl) ? `/img/recipes/${p.split('/').pop()}` : p);
+    recipe.pictures = recipe.pictures.map(p => !p.startsWith('http') ? `/img/recipes/${p.split('/').pop()}` : p);
 }
 
 const cookingTime = computed(() => {

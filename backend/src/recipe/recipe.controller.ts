@@ -111,7 +111,7 @@ export class RecipeController {
   }))
   async uploadFiles(@UploadedFiles() files) {
     console.log(files);
-    return files.map(file => ({ filename: file.filename, path: `${this.configService.get<string>('APP_URL')}/recipe/assets/${file.filename}`}));
+    return files.map(file => ({ filename: file.filename, path: file.filename}));
   }
 
   @Get('assets/:path')

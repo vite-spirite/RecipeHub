@@ -25,16 +25,16 @@ export default defineEventHandler(async () => {
                 for (let r = 0; r < recipes.length; r++) {
                     const recipe = recipes[r];
                     for (let i = 0; i < recipe.pictures.length; i++) {
-                        if(!recipe.pictures[i].startsWith(useRuntimeConfig().public.apiUrl)) {
+                        if(recipe.pictures[i].startsWith('http')) {
                             continue;
                         }
 
                         const image = recipe.pictures[i];
-                        const img = await fetch(image);
+                        const img = await fetch(`${useRuntimeConfig().public.apiUrl}/recipe/asstes/${image}`);
                         const buff = await img.arrayBuffer();
 
 
-                        writeFileSync(`public/img/recipes/${image.split('/').pop()}`, Buffer.from(buff));
+                        writeFileSync(`public/img/recipes/${image}`, Buffer.from(buff));
                         recipes[r].pictures[i] = `/img/recipes/${image.split('/').pop()}`;
                     }
                 }
