@@ -53,13 +53,27 @@
                     </div>
                 </div>
             </div>
+            <div class="flex flex-col space-y-5 w-full sm:w-1/3">
+                <div class="card p-5 mb-6 sm:mb-0 w-full">
+                    <div class="card-title">Ingredients</div>
 
-            <div class="card p-5 mb-6 sm:mb-0 w-full sm:w-1/3">
-                <div class="card-title">Ingredients</div>
+                    <ul class="list-disc list-inside mt-5">
+                        <li v-for="ingredient in recipe.ingredients" :key="ingredient.id">{{ ingredient.ingredient.name }}: {{ ingredient.quantity }} {{ ingredient.overrideUnit ? ingredient.overrideUnit : ingredient.ingredient.unit}}</li>
+                    </ul>
+                </div>
 
-                <ul class="list-disc list-inside mt-5">
-                    <li v-for="ingredient in recipe.ingredients" :key="ingredient.id">{{ ingredient.ingredient.name }}: {{ ingredient.quantity }} {{ ingredient.overrideUnit ? ingredient.overrideUnit : ingredient.ingredient.unit}}</li>
-                </ul>
+                <div class="card p-5 mb-6 sm:mb-0 w-full">
+                    <div class="card-title">Author</div>
+
+                    <div class="card-content flex flex-row gap-5">
+                        <img :src="recipe.author.picture" :alt="recipe.author.firstName" class="w-20 h-20 rounded-full object-cover" />
+                        <h5 class="title">{{ recipe.author.firstName }} {{ recipe.author.lastName }}</h5>
+                    </div>
+
+                    <div class="card-footer w-full flex flex-row justify-end items-center">
+                        <a :href="`/profile/${recipe.author.id}`" class="btn btn-primary ghost">View profile</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -87,7 +101,7 @@ const totalPrepTime = computed(() => {
 })
 
 const humanizeTime = (dur: moment.Duration): string => {
-    const date = moment(dur.asMilliseconds());
+    const date = moment(dur.asMilliseconds()).utc(false);
     return `${date.format('H:mm')}`;
 }
 

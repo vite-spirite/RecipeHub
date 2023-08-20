@@ -41,13 +41,6 @@ useHead({
       content: 'width=device-width, initial-scale=1',
     },
   ],
-  link: [
-    {
-      rel: 'icon',
-      type: 'image/x-icon',
-      href: 'http://localhost:3001/favicon.ico',
-    },
-  ],
 })
 
 loading.value = false;

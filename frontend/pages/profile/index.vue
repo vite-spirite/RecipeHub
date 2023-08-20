@@ -33,7 +33,7 @@
         </div>
 
         <div class="px-5">
-            <button class="bg-orange-100 w-full text-center font-bold font-primary text-white py-3 mt-5 hover:bg-orange-300 transition-all duration-200 rounded-md">+ Create new recipe</button>
+            <NuxtLink to="/recipe/create" class="block bg-orange-100 w-full text-center font-bold font-primary text-white py-3 mt-5 hover:bg-orange-300 transition-all duration-200 rounded-md">+ Create new recipe</NuxtLink>
         </div>
 
         <h2 class="title w-full pt-16 pb-5 px-5">Settings</h2>

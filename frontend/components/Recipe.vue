@@ -41,6 +41,6 @@ const {recipe} = defineProps<{
 
 const cookingTime = computed(() => {
     const duration = moment.duration(recipe.preparationTime + recipe.cookingTime + recipe.growingTime, 'seconds');
-    return moment(duration.asMilliseconds()).format('HH:mm');
+    return moment(duration.asMilliseconds()).utc(false).format('HH:mm');
 });
 </script>
