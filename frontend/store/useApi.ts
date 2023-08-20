@@ -44,7 +44,7 @@ export const useApi = defineStore('api', () => {
 
             if(error.status === 401 && includeBearer) {
                 await useUser().refresh();
-                return await fetchAsync<T>(route, method, includeBearer, body, headers);
+                return await $fetch<T>(apiUrl+route, {method, headers: headers, body});
             }
 
             throw error;
