@@ -11,6 +11,8 @@ const loading = ref(true);
 
 const {refreshToken} = useUser();
 
+const config = useRuntimeConfig();
+
 if(refreshToken) {
   await useUser().refresh(true);
 }
@@ -18,15 +20,15 @@ if(refreshToken) {
 useSeoMeta({
   title: 'RecipeHub',
   description: 'The best recipes in the world',
-  ogImage: 'http://localhost:3001/hero-image.jpg',
+  ogImage: config.public.website+'hero-image.jpg',
   ogTitle: 'RecipeHub',
   ogDescription: 'The best recipes in the world',
-  ogUrl: 'http://localhost:3001',
+  ogUrl: config.public.website,
   ogSiteName: 'RecipeHub',
   twitterCard: 'summary_large_image',
   twitterSite: '@recipehub',
   twitterCreator: '@recipehub',
-  twitterImage: 'http://localhost:3001/hero-image.jpg',
+  twitterImage: config.public.website+'hero-image.jpg',
   twitterTitle: 'RecipeHub',
   twitterDescription: 'The best recipes in the world',
 })

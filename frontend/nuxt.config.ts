@@ -5,7 +5,7 @@ export default defineNuxtConfig({
     {path: '~/components', extensions: ['vue']},
   ],
   site: {
-    url: 'http://localhost:3001',
+    url: process.env.WEBSITE_URL || 'http://localhost:3001',
   },
   ssr: true,
   routeRules: {
@@ -35,7 +35,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       website: process.env.WEBSITE_URL || 'http://localhost:3001/',
-      apiUrl: 'http://localhost:3000',
+      apiUrl: process.env.API_URL || 'http://localhost:3000',
       cookie: {
         refresh: 'token.refresh',
       },
