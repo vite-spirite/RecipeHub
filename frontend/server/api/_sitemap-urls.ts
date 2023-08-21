@@ -30,7 +30,7 @@ export default defineEventHandler(async () => {
                         }
 
                         const image = recipe.pictures[i];
-                        const img = await fetch(`${useRuntimeConfig().public.apiUrl}/recipe/asstes/${image}`);
+                        const img = await fetch(`${useRuntimeConfig().public.apiUrl}/recipe/assets/${image}`);
                         const buff = await img.arrayBuffer();
 
 
