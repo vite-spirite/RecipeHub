@@ -1,6 +1,6 @@
 <template>
     <div class="card p-0 rounded-md overflow-hidden">
-        <img :src="recipe.pictures[0]" :alt="recipe.name" class="w-full h-48 object-cover rounded-t-md" />
+        <img :src="resolveImagePath(recipe.pictures[0])" :alt="recipe.name" class="w-full h-48 object-cover rounded-t-md" />
 
         <div class="card-title pt-5 px-3 flex flex-row justify-between items-between">
             {{ recipe.name }}
@@ -35,13 +35,17 @@
 import { CompactRecipeDto } from 'api/dto/compactRecipe.dto';
 import moment from 'moment';
 
+const config = useRuntimeConfig();
+
 const {recipe} = defineProps<{
     recipe: CompactRecipeDto;
 }>();
 
-if(useRuntimeConfig().public.deploymentMode == 'static') {
-    recipe.pictures = recipe.pictures.map(p => !p.startsWith('http') ? `/img/recipes/${p.split('/').pop()}` : p);
-}
+const resolveImagePath = computed(() => {
+    return (path: string) => {
+        return path.startsWith('http') ? path : `${config.public.apiUrl}/recipe/assets/${path.split('/').pop()}`;
+    }
+})
 
 const cookingTime = computed(() => {
     const duration = moment.duration(recipe.preparationTime + recipe.cookingTime + recipe.growingTime, 'seconds');

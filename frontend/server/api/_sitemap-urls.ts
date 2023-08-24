@@ -14,36 +14,11 @@ export default defineEventHandler(async () => {
         const rresponse = await fetch(`${useRuntimeConfig().public.apiUrl}/recipe/category/${category.id}/1`);
         const _recipes = await rresponse.json();
         
-        //recipes.push(..._recipes.data.value.data);
-        for(let page = 1; page <= _recipes.lastPage; page++) {
-            const sresponse = await fetch(`${useRuntimeConfig().public.apiUrl}/recipe/category/${category.id}/${page}`);
-            const _recipe = await sresponse.json() as {data: RecipeDto[]};
-            
-            recipes.push(..._recipe.data);
-
-            if(useRuntimeConfig().public.deploymentMode === 'static') {
-                for (let r = 0; r < recipes.length; r++) {
-                    const recipe = recipes[r];
-                    for (let i = 0; i < recipe.pictures.length; i++) {
-                        if(recipe.pictures[i].startsWith('http')) {
-                            continue;
-                        }
-
-                        const image = recipe.pictures[i];
-                        const img = await fetch(`${useRuntimeConfig().public.apiUrl}/recipe/assets/${image}`);
-                        const buff = await img.arrayBuffer();
-
-
-                        writeFileSync(`public/img/recipes/${image}`, Buffer.from(buff));
-                        recipes[r].pictures[i] = `/img/recipes/${image.split('/').pop()}`;
-                    }
-                }
-            }
-        }
+        recipes.push(..._recipes.data);
     }
 
     const uresponse = await fetch(`${useRuntimeConfig().public.apiUrl}/users`);
-    const _users = await uresponse.json() as PublicUserDto[];
+    const _users = await uresponse.json() as {data: PublicUserDto[]};
 
-    return [...recipes.map(recipe => ({loc: `/recipe/${recipe.slug}`, lastmod: recipe.updatedAt, priority: 0.9})), ..._users.map(user => ({loc: `/profile/${user.id}`, lastmod: user.createdAt, priority: 0.9}))];
+    return [...recipes.map(recipe => ({loc: `/recipe/${recipe.slug}`, lastmod: recipe.updatedAt, priority: 0.9})), ..._users.data.map(user => ({loc: `/profile/${user.id}`, lastmod: user.createdAt, priority: 0.9}))];
 })

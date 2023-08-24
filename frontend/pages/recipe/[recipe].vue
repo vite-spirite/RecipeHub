@@ -13,7 +13,7 @@
         <div class="galery flex flex-row justify-between items-center mt-6">
             <Swiper class="w-full" :grab-cursor="true" :effect="'creative'" :modules="[SwiperEffectCreative]" :creativeEffect="{prev: {shadow: true,translate: [0, 0, -400],},next: {translate: ['100%', 0, 0],},}">
                 <SwiperSlide v-for="picture in recipe.pictures" :key="picture" class="w-full">
-                    <img :src="picture" :alt="recipe.name" class="w-full object-cover rounded-md" />
+                    <img :src="resolveImagePath(picture)" :alt="recipe.name" class="w-full object-cover rounded-md" />
                 </SwiperSlide>
             </Swiper>
         </div>
@@ -165,10 +165,6 @@ if(isAuth && favoriteRecipes.value.length === 0) {
 
 const {data: recipe} = await fetch<RecipeDto>(`/recipe/slug/${route.params.recipe}`, 'GET');
 
-if(useRuntimeConfig().public.deploymentMode == 'static') {
-    recipe.value.pictures = recipe.value.pictures.map(p => !p.startsWith('http') ? `/img/recipes/${p.split('/').pop()}` : p);
-}
-
 const createDescription = computed(() => {
     return recipe.value.steps.map(s => s.description).join(' ').substr(0, 160) + '...';
 })
@@ -177,18 +173,9 @@ const createTitle = computed(() => {
     return `${recipe.value.name} - RecipeHub`;
 })
 
-const resolveImagePath = computed(() => {
-    if(config.public.deploymentMode == 'static') {
-        return (path: string) => {
-            return path.startsWith('http') ? path : `${config.public.website}img/recipes/${path.split('/').pop()}`;
-        }
-    }
-    else {
-        return (path: string) => {
-            return path.startsWith('http') ? path : `${config.public.apiUrl}/recipe/assets/${path.split('/').pop()}`;
-        }
-    }
-})
+const resolveImagePath = (path: string) => {
+        return path.startsWith('http') ? path : `${config.public.apiUrl}/recipe/assets/${path.split('/').pop()}`;
+}
 
 const totalPrepTime = computed(() => {
     return moment.duration(recipe.value.preparationTime + recipe.value.cookingTime + recipe.value.growingTime, 'seconds').humanize();
@@ -204,15 +191,15 @@ const config = useRuntimeConfig();
 useSeoMeta({
     title: createTitle,
     ogTitle: createTitle,
-    ogImage: () => resolveImagePath.value(recipe.value.pictures[0]),
+    ogImage: () => resolveImagePath(recipe.value.pictures[0]),
     ogUrl: () => `${config.public.website}recipe/${recipe.value.slug}`,
     twitterCard: 'summary_large_image',
     twitterTitle: createTitle,
-    twitterImage: () => resolveImagePath.value(recipe.value.pictures[0]),
+    twitterImage: () => resolveImagePath(recipe.value.pictures[0]),
     description: createDescription,
     ogDescription: createDescription,
     twitterDescription: createDescription,
-    ogImageUrl: () => resolveImagePath.value(recipe.value.pictures[0]),
+    ogImageUrl: () => resolveImagePath(recipe.value.pictures[0]),
 })
 
 const roundRating = (rating: number): number => {

@@ -1,6 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  devtools: { enabled: false },
+  devtools: { enabled: true },
   components: [
     {path: '~/components', extensions: ['vue']},
   ],
@@ -38,8 +38,7 @@ export default defineNuxtConfig({
       apiUrl: process.env.API_URL || 'http://localhost:3000',
       cookie: {
         refresh: 'token.refresh',
-      },
-      deploymentMode: process.env.DEPLOYMENT_MODE || 'dynamic'
+      }
     }
   },
   robots: {
@@ -48,9 +47,6 @@ export default defineNuxtConfig({
     sitemap: (process.env.WEBSITE_URL || 'http://localhost:3001/') + 'sitemap.xml'
   },
   nitro: {
-    prerender: {
-      routes: ['/profile/[id]'],
-      ignore: ['/profile', '/recipe/create']
-    }
+    
   }
 })
