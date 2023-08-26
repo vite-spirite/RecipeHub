@@ -218,10 +218,6 @@ const preparationTime = defineInputBinds('preparationTime');
 const {fields: recipeIngredients, push: pushRecipeIngredients, remove: removeRecipeIngredients} = useFieldArray<CreateRecipeIngredientDto>('ingredients');
 const {fields: stepRecipeFields, push: stepRecipePush, remove: stepRecipeRemove} = useFieldArray<{description: string, time: number}>('steps');
 
-watch(errors, () => {
-    console.log(errors.value)
-})
-
 const addIngredient = (ingredient: IngredientDto) => {
     pushRecipeIngredients({
         ingredientId: ingredient.id,

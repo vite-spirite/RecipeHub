@@ -40,8 +40,8 @@
             <h2 class="title w-full pt-16 pb-5 px-5">My favorite recipes</h2>
             <div class="divider_h"></div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 mt-5 px-5" v-if="meRecipes.length > 0">
-                <Recipe class:="w-full" v-for="recipe in favoriteRecipes" :key="recipe.slug" :recipe="recipe" />
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 mt-5 px-5">
+                <Recipe class:="w-full" v-for="recipe in favoriteRecipes" :key="`favorite-${recipe.slug}`" :recipe="recipe" />
             </div>
         </div>
 
@@ -69,8 +69,8 @@
             </div>
 
             <div class="input-control">
-                <label for="password">Confirm password</label>
-                <input v-bind="confirmPassword" type="password" id="password" name="password" placeholder="Confirm new password" class="input"/>
+                <label for="confirmPassword">Confirm password</label>
+                <input v-bind="confirmPassword" type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm new password" class="input"/>
                 <span class="error-text-alt">{{ updateErrors.confirm_password?.replace('confirm_password', 'Confirm password') }}</span>
             </div>
         </form>
@@ -95,7 +95,7 @@ const user = useUser();
 const {me: currentUser, meRecipes, favoriteRecipes} = storeToRefs(user);
 const {update} = user;
 
-if (!currentUser.value) {
+/*if (!currentUser.value) {
     await user.refresh(true);
 }
 
@@ -105,7 +105,13 @@ if(meRecipes.value.length === 0) {
 
 if(favoriteRecipes.value.length === 0) {
     await user.loadFavoriteRecipes();
-}
+}*/
+
+await useAsyncData(async () => {
+    await user.refresh(true);
+    await user.loadMeRecipes();
+    await user.loadFavoriteRecipes();
+});
 
 const {defineInputBinds, values: updateValues, errors: updateErrors, setErrors: setUpdateErrors, meta, isSubmitting, handleSubmit} = useForm<{email?: string, currentPassword?: string, password?: string, confirm_password?: string}>({
     validationSchema: yup.object({

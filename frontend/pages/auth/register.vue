@@ -79,6 +79,7 @@ import {SignupDto} from '~/types/forms/signup.form.dto';
 
 import {object, string, ref as yupRef} from 'yup';
 import { useUser } from '~/store/useUser';
+import { useApi } from '~/store/useApi';
 
 definePageMeta({
     middleware: 'guest'
@@ -86,12 +87,13 @@ definePageMeta({
 
 const {register: useRegister} = useUser();
 const apiError: Ref<string|undefined> = ref(undefined);
+const {resolveApiUrl} = useApi();
 
 const loginWithProvider = (provider: Provider) => {
     const top = screen.height / 2 - 600 / 2;
     const left = screen.width / 2 - 600 / 2;
 
-    window.open(`${useRuntimeConfig().public.apiUrl}/auth/${provider}`, 'popup', 'width=600,height=600,popup=true,top=' + top + ',left=' + left);
+    window.open(resolveApiUrl(`/auth/${provider}`), 'popup', 'width=600,height=600,popup=true,top=' + top + ',left=' + left);
 }
 
 const {defineInputBinds, errors, meta, isSubmitting, handleSubmit} = useForm<SignupDto>({

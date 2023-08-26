@@ -1,12 +1,13 @@
 {
-  "name": "nuxt-app",
+  "name": "recipehub",
   "private": true,
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "start": "nuxt start"
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",

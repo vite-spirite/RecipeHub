@@ -153,17 +153,28 @@ import { storeToRefs } from 'pinia';
 import * as yup from 'yup';
 
 const route = useRoute();
-const {fetch} = useApi();
+const {fetch, resolveApiUrl} = useApi();
 
 const user = useUser();
 const {isAuth, favoriteRecipes, me} = storeToRefs(user);
 const {toggleFavoriteRecipe} = user;
 
+const {data} = await useAsyncData(async () => {
+    const recipe = await $fetch<RecipeDto>(resolveApiUrl(`/recipe/slug/${route.params.recipe}`), {method: 'GET'});
+    return recipe;
+});
+
+const recipe = ref(data.value as RecipeDto);
+
+if(!recipe.value) {
+    abortNavigation('recipe not found');
+}
+
+
+
 if(isAuth && favoriteRecipes.value.length === 0) {
     await user.loadFavoriteRecipes();
 }
-
-const {data: recipe} = await fetch<RecipeDto>(`/recipe/slug/${route.params.recipe}`, 'GET');
 
 const createDescription = computed(() => {
     return recipe.value.steps.map(s => s.description).join(' ').substr(0, 160) + '...';
@@ -174,7 +185,7 @@ const createTitle = computed(() => {
 })
 
 const resolveImagePath = (path: string) => {
-        return path.startsWith('http') ? path : `${config.public.apiUrl}/recipe/assets/${path.split('/').pop()}`;
+        return path.startsWith('http') ? path : useRuntimeConfig().public.apiUrlClientSide+`/recipe/assets/${path.split('/').pop()}`;
 }
 
 const totalPrepTime = computed(() => {

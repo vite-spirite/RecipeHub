@@ -65,7 +65,6 @@ export class AuthService {
         const {id, iter_refresh} = this.jwtService.verify(refreshToken);
 
         const iter_refresh_cache = +(await this.cache.get(`users:${id}`));
-        console.log(iter_refresh_cache, iter_refresh);
 
         if(!iter_refresh_cache || iter_refresh_cache !== iter_refresh) {
             throw new UnauthorizedException();

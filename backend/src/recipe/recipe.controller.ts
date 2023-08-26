@@ -110,7 +110,6 @@ export class RecipeController {
     })
   }))
   async uploadFiles(@UploadedFiles() files) {
-    console.log(files);
     return files.map(file => ({ filename: file.filename, path: file.filename}));
   }
 

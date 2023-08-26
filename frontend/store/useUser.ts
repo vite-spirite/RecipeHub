@@ -84,7 +84,7 @@ export const useUser = defineStore('user', () => {
 
     const register = async (email: string, password: string, passwordConfirmation: string, firstName: string, lastName: string) => {
         try {
-            const response = await useApi().fetchAsync<UserDto>('/users', 'POST', false, {email, password, passwordConfirmation, firstName, lastName});
+            const response = await useApi().fetchAsync<UserDto>('/users', 'POST', false, {email, password, passwordConfirmation, firstName, lastName, picture: `https://placehold.co/256/FB923C/8888883?text=${firstName[0]}${lastName[0]}`});
             
             if(!(response instanceof Error)) {
 
@@ -178,8 +178,6 @@ export const useUser = defineStore('user', () => {
         await loadFavoriteRecipes();
         return response;
     }
-
-    loadFavoriteRecipes();
 
     return {
         setRefreshToken, 

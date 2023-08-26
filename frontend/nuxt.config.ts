@@ -9,7 +9,7 @@ export default defineNuxtConfig({
   },
   ssr: true,
   routeRules: {
-    '/auth/popup/**': {ssr: false}
+    '/auth/popup/**': {ssr: false},
   },
   modules: [
     '@nuxtjs/tailwindcss',
@@ -35,7 +35,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       website: process.env.WEBSITE_URL || 'http://localhost:3001/',
-      apiUrl: process.env.API_URL || 'http://localhost:3000',
+      apiUrlServerSide: process.env.API_URL_SERVER_SIDE || 'http://localhost:3000',
+      apiUrlClientSide: process.env.API_URL_CLIENT_SIDE || 'http://localhost:3000',
       cookie: {
         refresh: 'token.refresh',
       }
@@ -46,7 +47,4 @@ export default defineNuxtConfig({
     allow: ['*'],
     sitemap: (process.env.WEBSITE_URL || 'http://localhost:3001/') + 'sitemap.xml'
   },
-  nitro: {
-    
-  }
 })

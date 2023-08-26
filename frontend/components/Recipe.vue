@@ -34,8 +34,10 @@
 <script setup lang="ts">
 import { CompactRecipeDto } from 'api/dto/compactRecipe.dto';
 import moment from 'moment';
+import { useApi } from '~/store/useApi';
 
 const config = useRuntimeConfig();
+const {resolveApiUrl} = useApi();
 
 const {recipe} = defineProps<{
     recipe: CompactRecipeDto;
@@ -43,7 +45,7 @@ const {recipe} = defineProps<{
 
 const resolveImagePath = computed(() => {
     return (path: string) => {
-        return path.startsWith('http') ? path : `${config.public.apiUrl}/recipe/assets/${path.split('/').pop()}`;
+        return path.startsWith('http') ? path : useRuntimeConfig().public.apiUrlClientSide+`/recipe/assets/${path.split('/').pop()}`;
     }
 })
 

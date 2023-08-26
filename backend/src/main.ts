@@ -24,9 +24,9 @@ async function bootstrap() {
   app.use(urlencoded({limit: '50mb', extended: true}));
 
   app.enableCors({
-    allowedHeaders: '*',
-    origin: '*',
-    credentials: true,
+    origin: ['http://recipeshub.localhost', 'http://frontend:8080', 'http://app:3000'], // L'URL de votre application frontend
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true, // Si votre application utilise des cookies ou des sessions
   });
 
   app.use(session({

@@ -15,7 +15,7 @@ export const useCategory = defineStore('category', () => {
     const fetchCategories = async () => {
         if(categories.value.length > 0) return Promise.resolve(categories.value);
         const response = await api.fetchAsync<CategoryDto[]>('/category', 'GET');
-        
+
         if(response instanceof Error) return Promise.reject(response);
 
         categories.value = response.map(category => ({...category, recipes: {data: [], page: 0, perPage: 0, total: 0, lastPage: 0}}));
@@ -30,7 +30,7 @@ export const useCategory = defineStore('category', () => {
         }
 
 
-        const response = await api.fetch<RecipePaginateDto>(`/recipe/category/${category.id}/${page}`, 'GET');
+        const response = await api.fetchAsync<RecipePaginateDto>(`/recipe/category/${category.id}/${page}`, 'GET');
 
         const _c = categories.value.find(c => c.id === category.id);
 
@@ -38,13 +38,12 @@ export const useCategory = defineStore('category', () => {
 
         if(response instanceof Error) return Promise.reject(response);
 
-        _c.recipes.data.push(...response.data.value.data);
-        _c.recipes.perPage = response.data.value.perPage;
-        _c.recipes.total = response.data.value.total;
-        _c.recipes.lastPage = response.data.value.lastPage;
+        _c.recipes.data.push(...response.data);
+        _c.recipes.perPage = response.perPage;
+        _c.recipes.total = response.total;
+        _c.recipes.lastPage = response.lastPage;
         _c.recipes.page = page;
 
-        console.log(_c);
 
         return Promise.resolve(_c);
     }

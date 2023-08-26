@@ -344,9 +344,7 @@ export class RecipeService {
     }
 
     async addFavoriteRecipe(id: number, user: JwtPayload): Promise<void> {
-        console.log(user);
         const exist = await this.prisma.userFavoriteRecipe.findFirst({where: {userId: user.id, recipeId: id}});
-        console.log(exist);
 
         if(!exist) {
             await this.prisma.userFavoriteRecipe.create({

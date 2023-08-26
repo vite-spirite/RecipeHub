@@ -6,11 +6,10 @@ import { useUser } from "./useUser";
 
 export const useApi = defineStore('api', () => {
     const runtimeConfig = useRuntimeConfig();
-    console.log(runtimeConfig.public.website);
-    
-    const apiUrl = runtimeConfig.public.apiUrl;
+    const apiUrlServerSide = runtimeConfig.public.apiUrlServerSide;
 
     const fetch = async <T = any>(route: string, method: "GET"|"POST"|"PATCH"|"DELETE", includeBearer: boolean = false, body?: any): Promise<AsyncData<T, FetchError>> => {
+        const _url = resolveApiUrl(route);
 
         const {setAccessToken, accessToken, refreshToken} = useUser();
 
@@ -22,7 +21,7 @@ export const useApi = defineStore('api', () => {
             headers['Authorization'] = "Bearer " + accessToken;
         };
 
-        return await useFetch(apiUrl+route, {
+        return await useFetch(_url, {
             method,
             headers,
             body
@@ -30,12 +29,14 @@ export const useApi = defineStore('api', () => {
     }
 
     const fetchAsync = async <T = any>(route: string, method: "GET"|"POST"|"PATCH"|"DELETE", includeBearer: boolean = false, body?: any, headers: {[K: string]: string} = {'Content-Type': 'application/json'}): Promise<T|FetchError> => {
+        const _url = resolveApiUrl(route);
+
         if(includeBearer) { 
             headers['Authorization'] = "Bearer " + useUser().accessToken;
         }
 
-        try {
-            const response = await $fetch<T>(apiUrl+route, {method, headers: headers, body});
+        try {            
+            const response = await $fetch<T>(_url, {method, headers: headers, body});
 
             return response;
         }
@@ -44,12 +45,16 @@ export const useApi = defineStore('api', () => {
 
             if(error.status === 401 && includeBearer) {
                 await useUser().refresh();
-                return await $fetch<T>(apiUrl+route, {method, headers: headers, body});
+                return await $fetch<T>(_url, {method, headers: headers, body});
             }
 
             throw error;
         }
     }
 
-    return {fetch, fetchAsync}
+    const resolveApiUrl = (route: string) => {
+        return process.server ? apiUrlServerSide+route : runtimeConfig.public.apiUrlClientSide+route;
+    }
+
+    return {fetch, fetchAsync, resolveApiUrl}
 });

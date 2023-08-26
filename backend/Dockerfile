@@ -10,6 +10,6 @@ RUN npx prisma generate
 
 RUN npm i -g @nestjs/cli
 
-CMD ["npm", "run", "start:dev:migrate"]
+CMD ["npm", "run", "start:migrate"]
 
 EXPOSE 3000

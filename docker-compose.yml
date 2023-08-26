@@ -18,6 +18,8 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+     nuxt-network:
   redis:
     image: redis
     ports:
@@ -27,6 +29,8 @@ services:
     command: redis-server --requirepass redis --save 20 1 --loglevel warning
     volumes:
       - redis:/data
+    networks:
+     nuxt-network:
   app:
     build: ./backend
     container_name: recipehub_backend
@@ -37,6 +41,31 @@ services:
         condition: service_healthy
     volumes:
       - ./backend:/app
+    networks:
+      - nuxt-network
+  frontend:
+    build: ./frontend
+    container_name: recipehub_frontend
+    ports:
+      - 8080:8080
+    depends_on:
+      - app
+    networks:
+      - nuxt-network
+  web-server:
+    build: ./proxy
+    container_name: recipehub_proxy
+    ports:
+      - 80:80
+    networks:
+      nuxt-network:
+    depends_on:
+      - frontend
+    restart: unless-stopped
 volumes:
   pgdata:
   redis:
+  web-root:
+networks:
+  nuxt-network:
+    driver: bridge
