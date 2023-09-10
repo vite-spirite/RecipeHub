@@ -67,11 +67,3 @@
 ###
 
 <p align="left">Les contributions à RecipeHub sont les bienvenues ! Si vous souhaitez ajouter de nouvelles fonctionnalités, corriger des bogues ou améliorer la conception, veuillez soumettre une pull request.</p>
-
-###
-
-<h2 align="left">Preview</h2>
-
-###
-[![Netlify Status](https://api.netlify.com/api/v1/badges/f9b5606f-939a-45cb-940d-3ac5dfb4b625/deploy-status)](https://app.netlify.com/sites/mb-recipehub/deploys)
-<p align="left">Vous pouvez consulter une démo de l'application à l'adresse suivante : <a href="mb-recipehub.netlify.app" target="_blank">mb-recipehub.netlify.app</a></p>
